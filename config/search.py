@@ -105,7 +105,7 @@ prefer_recent_24h_jobs = True      # True or False
 # Helps avoid applying to crowded listings where chances are very low.
 # Set to -1 to disable this check entirely.
 # Recommended: 100 (skip jobs where 100+ people already applied)
-skip_if_applicants_exceed = 100    # -1 to disable, or a positive integer
+skip_if_applicants_exceed = 200    # -1 to disable, or a positive integer
 
 # Jobs with fewer applicants than this threshold are flagged as HIGH PRIORITY in the logs.
 # Set to -1 to disable priority logging.
