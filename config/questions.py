@@ -30,10 +30,10 @@ years_of_experience = "1"          # 1 year — Teaching Assistant at IIT Jammu 
 require_visa = "No"                # Applying to India-based roles; no sponsorship needed
 
 # What is the link to your portfolio website / GitHub
-website = "https://github.com/ashutoshverma"
+website = "https://github.com/naamashutosh"
 
 # Please provide the link to your LinkedIn profile.
-linkedIn = "https://www.linkedin.com/in/ashutoshverma"
+linkedIn = "https://www.linkedin.com/in/ashutoshverma05/"
 
 # What is the status of your citizenship?
 # Valid options: "U.S. Citizen/Permanent Resident", "Non-citizen allowed to work for any employer",
@@ -104,8 +104,8 @@ Name: Ashutosh Verma
 Email: 2024psp0004@iitjammu.ac.in
 Phone: +91-8439447732
 Location: Jammu, Jammu & Kashmir, India
-LinkedIn: https://www.linkedin.com/in/ashutoshverma
-GitHub: https://github.com/ashutoshverma
+LinkedIn: https://www.linkedin.com/in/ashutoshverma05/
+GitHub: https://github.com/naamashutosh
 
 EDUCATION:
 - M.Tech, Signal Processing and Communication Engineering (SPCOM), IIT Jammu — CGPA: 8.16 (2024–Present)
