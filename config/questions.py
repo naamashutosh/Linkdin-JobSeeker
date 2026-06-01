@@ -21,102 +21,145 @@ version:    26.01.20.5.08
 # >>>>>>>>>>> Easy Apply Questions & Inputs <<<<<<<<<<<
 
 # Give an relative path of your default resume to be uploaded. If file in not found, will continue using your previously uploaded resume in LinkedIn.
-default_resume_path = "all resumes/default/resume.pdf"      # (In Development)
+default_resume_path = "all resumes/default/resume.pdf"
 
-# What do you want to answer for questions that ask about years of experience you have, this is different from current_experience? 
-years_of_experience = "5"          # A number in quotes Eg: "0","1","2","3","4", etc.
+# What do you want to answer for questions that ask about years of experience you have?
+years_of_experience = "1"          # 1 year — Teaching Assistant at IIT Jammu (Aug 2024–Present)
 
 # Do you need visa sponsorship now or in future?
-require_visa = "No"               # "Yes" or "No"
+require_visa = "No"                # Applying to India-based roles; no sponsorship needed
 
-# What is the link to your portfolio website, leave it empty as "", if you want to leave this question unanswered
-website = "https://github.com/GodsScion"                        # "www.example.bio" or "" and so on....
+# What is the link to your portfolio website / GitHub
+website = "https://github.com/ashutoshverma"
 
 # Please provide the link to your LinkedIn profile.
-linkedIn = "https://www.linkedin.com/in/saivigneshgolla/"       # "https://www.linkedin.com/in/example" or "" and so on...
+linkedIn = "https://www.linkedin.com/in/ashutoshverma"
 
-# What is the status of your citizenship? # If left empty as "", tool will not answer the question. However, note that some companies make it compulsory to be answered
-# Valid options are: "U.S. Citizen/Permanent Resident", "Non-citizen allowed to work for any employer", "Non-citizen allowed to work for current employer", "Non-citizen seeking work authorization", "Canadian Citizen/Permanent Resident" or "Other"
-us_citizenship = "U.S. Citizen/Permanent Resident"
-
+# What is the status of your citizenship?
+# Valid options: "U.S. Citizen/Permanent Resident", "Non-citizen allowed to work for any employer",
+# "Non-citizen allowed to work for current employer", "Non-citizen seeking work authorization",
+# "Canadian Citizen/Permanent Resident" or "Other"
+us_citizenship = "Non-citizen allowed to work for any employer"
 
 
 ## SOME ANNOYING QUESTIONS BY COMPANIES 🫠 ##
 
-# What to enter in your desired salary question (American and European), What is your expected CTC (South Asian and others)?, only enter in numbers as some companies only allow numbers,
-desired_salary = 1200000          # 80000, 90000, 100000 or 120000 and so on... Do NOT use quotes
+# Expected CTC / desired salary (in INR for India roles)
+# 10 LPA is a reasonable expectation for a fresh IIT M.Tech graduate
+desired_salary = 1000000           # 10,00,000 INR = 10 LPA. Do NOT use quotes.
 '''
-Note: If question has the word "lakhs" in it (Example: What is your expected CTC in lakhs), 
-then it will add '.' before last 5 digits and answer. Examples: 
+Note: If question has the word "lakhs" in it (Example: What is your expected CTC in lakhs),
+then it will add '.' before last 5 digits and answer. Examples:
 * 2400000 will be answered as "24.00"
-* 850000 will be answered as "8.50"
-And if asked in months, then it will divide by 12 and answer. Examples:
-* 2400000 will be answered as "200000"
-* 850000 will be answered as "70833"
+* 1000000 will be answered as "10.00"
+And if asked in months, then it will divide by 12 and answer.
 '''
 
-# What is your current CTC? Some companies make it compulsory to be answered in numbers...
-current_ctc = 800000            # 800000, 900000, 1000000 or 1200000 and so on... Do NOT use quotes
+# Current CTC — student/TA stipend (IIT Jammu TA stipend ~12,400/month)
+current_ctc = 0                    # 0 as currently a full-time M.Tech student. Do NOT use quotes.
 '''
-Note: If question has the word "lakhs" in it (Example: What is your current CTC in lakhs), 
-then it will add '.' before last 5 digits and answer. Examples: 
-* 2400000 will be answered as "24.00"
-* 850000 will be answered as "8.50"
-# And if asked in months, then it will divide by 12 and answer. Examples:
-# * 2400000 will be answered as "200000"
-# * 850000 will be answered as "70833"
+Note: If question has the word "lakhs" in it (Example: What is your current CTC in lakhs),
+then it will add '.' before last 5 digits and answer.
 '''
-
-# (In Development) # Currency of salaries you mentioned. Companies that allow string inputs will add this tag to the end of numbers. Eg: 
-# currency = "INR"                 # "USD", "INR", "EUR", etc.
 
 # What is your notice period in days?
-notice_period = 30                   # Any number >= 0 without quotes. Eg: 0, 7, 15, 30, 45, etc.
+notice_period = 0                  # 0 — student, available to join immediately after completion.
 '''
-Note: If question has 'month' or 'week' in it (Example: What is your notice period in months), 
-then it will divide by 30 or 7 and answer respectively. Examples:
-* For notice_period = 66:
-  - "66" OR "2" if asked in months OR "9" if asked in weeks
-* For notice_period = 15:"
-  - "15" OR "0" if asked in months OR "2" if asked in weeks
-* For notice_period = 0:
-  - "0" OR "0" if asked in months OR "0" if asked in weeks
+Note: If question has 'month' or 'week' in it, it will divide by 30 or 7 respectively.
 '''
 
-# Your LinkedIn headline in quotes Eg: "Software Engineer @ Google, Masters in Computer Science", "Recent Grad Student @ MIT, Computer Science"
-linkedin_headline = "Full Stack Developer with Masters in Computer Science and 4+ years of experience" # "Headline" or "" to leave this question unanswered
+# Your LinkedIn headline
+linkedin_headline = "M.Tech @ IIT Jammu | Signal Processing & AI/ML | 2 Accepted Publications (IEEE EMBC 2026, NCC)"
 
-# Your summary in quotes, use \n to add line breaks if using single quotes "Summary".You can skip \n if using triple quotes """Summary"""
+# Your summary / about section
 linkedin_summary = """
-I'm a Senior Software Engineer at Amazon with Masters in CS and 4+ years of experience in developing and maintaining Full Stack Web applications and cloud solutions. 
-Specialized in React, Node.js, and Python.
+M.Tech student at IIT Jammu specializing in Signal Processing and Communication Engineering (CGPA: 8.16), with hands-on research in Audio ML, Deep Learning, and Embedded AI systems. Published two accepted papers at IEEE EMBC 2026 and NCC India on speech-based oral cancer detection using multi-modal attention networks. Experienced in PyTorch, TensorFlow, Python, MATLAB, Whisper, Vision Transformers, and ONNX Runtime. Passionate about building production-grade AI systems at the intersection of signal processing, deep learning, and embedded deployment. Teaching Assistant for Digital Signal Processing Lab at IIT Jammu since Aug 2024.
 """
 
 '''
-Note: If left empty as "", the tool will not answer the question. However, note that some companies make it compulsory to be answered. Use \n to add line breaks.
-''' 
+Note: If left empty as "", the tool will not answer the question.
+'''
 
-# Your cover letter in quotes, use \n to add line breaks if using single quotes "Cover Letter".You can skip \n if using triple quotes """Cover Letter""" (This question makes sense though)
+# Your cover letter
 cover_letter = """
-Cover Letter
-"""
-##> ------ Dheeraj Deshwal : dheeraj9811 Email:dheeraj20194@iiitd.ac.in/dheerajdeshwal9811@gmail.com - Feature ------
+Dear Hiring Team,
 
-# Your user_information_all letter in quotes, use \n to add line breaks if using single quotes "user_information_all".You can skip \n if using triple quotes """user_information_all""" (This question makes sense though)
-# We use this to pass to AI to generate answer from information , Assuing Information contians eg: resume  all the information like name, experience, skills, Country, any illness etc. 
-user_information_all ="""
-User Information
+I am Ashutosh Verma, an M.Tech student at IIT Jammu specializing in Signal Processing and Communication Engineering (CGPA: 8.16). My research focuses on Audio ML, Deep Learning, and Embedded AI, with two accepted publications at IEEE EMBC 2026 and NCC India on speech-based oral cancer detection.
+
+I have strong hands-on experience with PyTorch, TensorFlow, Python, MATLAB, Whisper, Vision Transformers, and edge deployment via ONNX Runtime and PyTorch C++. My projects span clinical AI, 5G protocol simulation, RF signal classification, NLP pipelines, and bare-metal embedded systems on STM32 and TI C6748.
+
+As Teaching Assistant for the DSP Lab at IIT Jammu, I have guided 40+ students in ML-integrated signal analysis and production-ready inference pipelines. I am eager to bring this research depth and engineering rigour to your team.
+
+Thank you for considering my application.
+
+Regards,
+Ashutosh Verma
++91-8439447732 | 2024psp0004@iitjammu.ac.in
+"""
+
+##> ------ Dheeraj Deshwal : dheeraj9811 - Feature ------
+# Full profile info passed to AI to auto-answer unknown application questions
+user_information_all = """
+Name: Ashutosh Verma
+Email: 2024psp0004@iitjammu.ac.in
+Phone: +91-8439447732
+Location: Jammu, Jammu & Kashmir, India
+LinkedIn: https://www.linkedin.com/in/ashutoshverma
+GitHub: https://github.com/ashutoshverma
+
+EDUCATION:
+- M.Tech, Signal Processing and Communication Engineering (SPCOM), IIT Jammu — CGPA: 8.16 (2024–Present)
+- B.Tech, Electronics and Communication Engineering, Galgotias College of Engineering & Technology — CGPA: 8.07 (2017–2021)
+
+CURRENT ROLE:
+- Teaching Assistant, Digital Signal Processing Lab, IIT Jammu (Aug 2024–Present)
+  Guiding 40+ students in ML-integrated signal analysis, FFT, FIR/IIR design, PyTorch model development.
+
+EXPERIENCE: ~1 year (Teaching Assistant). Fresher / Entry-Level candidate.
+
+SKILLS:
+- Languages: Python, MATLAB, C/C++, SQL
+- ML & DL: PyTorch, TensorFlow, CNNs, Transformers, BERT, Whisper, Vision Transformers (ViT), Wav2Vec2, Scikit-Learn
+- Signal Processing: STFT, MFCC, PSD, WST-1D/2D, FIR/IIR Design, FFT, Spectrograms
+- Wireless & RF: Modulation Classification, RadioML, SDR, SNR Estimation, 5G NR PHY/MAC (3GPP)
+- Embedded: Embedded C, STM32, FreeRTOS, TI TMDSLCDK6748, UART, ONNX Runtime, PyTorch C++
+- Tools: Git, Linux, Jupyter, Docker, ONNX Runtime, MATLAB Simulink, CCS, ADS
+
+PUBLICATIONS (Accepted):
+1. "Exploiting Wavelet Scattering and Spectral Features in Tri-Modal Cross-Attention for Oral Cancer Detection" — IEEE EMBC 2026
+2. "Speech-Driven Early Oral Cancer Screening Using Adaptive VMD and Multi-Modal Attention Network" — NCC India
+
+CERTIFICATIONS:
+- Machine Learning Specialization — Andrew Ng, Coursera
+- Qualcomm 5G Introductory Level Certification — Qualcomm
+- Crash Course on Python — Google, Coursera
+
+KEY PROJECTS:
+- Embedded Oral Cancer Detection on Raspberry Pi 4B (sub-200ms inference, ONNX Runtime)
+- 5G NR L1/L2 Protocol Stack Simulator (PHY: LDPC, OFDM, HARQ; MAC: MCS, scheduling; 3GPP 38.xxx)
+- RF Signal Classification on RadioML (92%+ accuracy, 11 modulation types, 220K I/Q samples)
+- FreeRTOS Multi-Task Scheduler on STM32; Bare-Metal UART Bootloader with CRC32
+- YOLOv8 Vehicle Detection (mAP@0.5 = 0.89, ONNX/TensorRT FP16 for Jetson, 60+ FPS)
+- End-to-End NLP Pipeline with DistilBERT (93%+ accuracy, ONNX + FastAPI deployment)
+
+AVAILABILITY: Immediate (student, 0 days notice period)
+EXPECTED CTC: 10 LPA (INR)
+NATIONALITY: Indian
+WORK AUTHORIZATION: Authorized to work in India. Would require visa sponsorship for international roles.
+HIGHEST DEGREE: M.Tech (Master of Technology) — in progress
+UNDERGRADUATE DEGREE: B.Tech in Electronics and Communication Engineering
 """
 ##<
+
 '''
-Note: If left empty as "", the tool will not answer the question. However, note that some companies make it compulsory to be answered. Use \n to add line breaks.
-''' 
+Note: If left empty as "", the tool will not answer the question.
+'''
 
 # Name of your most recent employer
-recent_employer = "Not Applicable" # "", "Lala Company", "Google", "Snowflake", "Databricks"
+recent_employer = "IIT Jammu"      # Teaching Assistant role
 
-# Example question: "On a scale of 1-10 how much experience do you have building web or mobile applications? 1 being very little or only in school, 10 being that you have built and launched applications to real users"
-confidence_level = "8"             # Any number between "1" to "10" including 1 and 10, put it in quotes ""
+# Confidence level for skill-based questions (1–10)
+confidence_level = "7"             # Strong foundation, research publications, but fresher level
 ##
 
 
