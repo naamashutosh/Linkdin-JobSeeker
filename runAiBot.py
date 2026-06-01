@@ -44,15 +44,13 @@ from modules.validator import validate_config
 if use_AI:
     from modules.ai.openaiConnections import ai_create_openai_client, ai_extract_skills, ai_answer_question, ai_close_openai_client
     from modules.ai.deepseekConnections import deepseek_create_client, deepseek_extract_skills, deepseek_answer_question
-    from modules.ai.geminiConnections import gemini_create_client, gemini_extract_skills, gemini_answer_question
+    from modules.ai.geminiConnections import gemini_create_client, gemini_extract_skills, gemini_answer_question, gemini_check_job_match
+    from modules.ai.ollamaConnections import ollama_create_client, ollama_extract_skills, ollama_answer_question, ollama_check_job_match, ollama_select_projects
 
 if enable_custom_resume:
     from config.projects import projects_list as all_projects
     from modules.resume_customizer import generate_custom_resume, select_projects_with_ai
     from modules.resume_logger import log_resume_application
-
-if enable_job_match_filter and use_AI:
-    from modules.ai.geminiConnections import gemini_check_job_match
 
 from typing import Literal
 
@@ -820,6 +818,8 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
                                 answer = deepseek_answer_question(aiClient, label_org, options=None, question_type="text", job_description=job_description, about_company=None, user_information_all=user_information_all)
                             elif ai_provider.lower() == "gemini":
                                 answer = gemini_answer_question(aiClient, label_org, options=None, question_type="text", job_description=job_description, about_company=None, user_information_all=user_information_all)
+                            elif ai_provider.lower() == "ollama":
+                                answer = ollama_answer_question(aiClient, label_org, options=None, question_type="text", job_description=job_description, user_information_all=user_information_all)
                             else:
                                 randomly_answered_questions.add((label_org, "text"))
                                 answer = years_of_experience
@@ -866,6 +866,8 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
                                 answer = deepseek_answer_question(aiClient, label_org, options=None, question_type="textarea", job_description=job_description, about_company=None, user_information_all=user_information_all)
                             elif ai_provider.lower() == "gemini":
                                 answer = gemini_answer_question(aiClient, label_org, options=None, question_type="textarea", job_description=job_description, about_company=None, user_information_all=user_information_all)
+                            elif ai_provider.lower() == "ollama":
+                                answer = ollama_answer_question(aiClient, label_org, options=None, question_type="textarea", job_description=job_description, user_information_all=user_information_all)
                             else:
                                 randomly_answered_questions.add((label_org, "textarea"))
                                 answer = ""
@@ -1173,8 +1175,9 @@ def apply_to_jobs(search_terms: list[str]) -> None:
                         try:
                             if ai_provider.lower() == "gemini":
                                 match_score = gemini_check_job_match(aiClient, title, description, user_information_all)
+                            elif ai_provider.lower() == "ollama":
+                                match_score = ollama_check_job_match(aiClient, title, description, user_information_all)
                             else:
-                                # For OpenAI/DeepSeek: use a simple prompt via answer_question
                                 from modules.ai.prompts import job_match_prompt
                                 _mp = job_match_prompt.format(candidate_profile=user_information_all[:2000], job_title=title, job_description=description[:2500])
                                 _raw = ai_answer_question(aiClient, _mp) if ai_provider.lower() == "openai" else deepseek_answer_question(aiClient, _mp)
@@ -1205,6 +1208,8 @@ def apply_to_jobs(search_terms: list[str]) -> None:
                                 skills = deepseek_extract_skills(aiClient, description)
                             elif ai_provider.lower() == "gemini":
                                 skills = gemini_extract_skills(aiClient, description)
+                            elif ai_provider.lower() == "ollama":
+                                skills = ollama_extract_skills(aiClient, description)
                             else:
                                 skills = "In Development"
                             print_lg(f"Extracted skills using {ai_provider} AI")
@@ -1464,13 +1469,14 @@ def main() -> None:
         if use_AI:
             if ai_provider == "openai":
                 aiClient = ai_create_openai_client()
-            ##> ------ Yang Li : MARKYangL - Feature ------
-            # Create DeepSeek client
             elif ai_provider == "deepseek":
                 aiClient = deepseek_create_client()
             elif ai_provider == "gemini":
                 aiClient = gemini_create_client()
-            ##<
+            elif ai_provider == "ollama":
+                aiClient = ollama_create_client()
+                if aiClient:
+                    print_lg(f"Ollama ready — model: {aiClient}. Unlimited local inference enabled.")
 
             try:
                 about_company_for_ai = " ".join([word for word in (first_name+" "+last_name).split() if len(word) > 3])

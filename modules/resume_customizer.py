@@ -49,6 +49,10 @@ def _call_ai(ai_client, ai_provider: str, prompt: str) -> str:
         from modules.ai.geminiConnections import gemini_completion
         result = gemini_completion(ai_client, prompt)
         return str(result) if result else ""
+    elif provider == "ollama":
+        from modules.ai.ollamaConnections import ollama_completion
+        result = ollama_completion(ai_client, prompt)
+        return str(result) if result else ""
     elif provider == "deepseek":
         from modules.ai.deepseekConnections import deepseek_completion
         messages = [{"role": "user", "content": prompt}]
