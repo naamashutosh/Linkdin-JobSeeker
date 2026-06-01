@@ -348,9 +348,43 @@ def ai_evaluate_resume(
 
 
 def ai_check_job_relevance(
-    client: OpenAI, 
+    client: OpenAI,
     job_description: str, about_company: str,
     stream: bool = stream_output
 ) -> dict:
     pass
+
+
+def ai_check_job_match(
+    client: OpenAI,
+    job_title: str,
+    job_description: str,
+    candidate_profile: str,
+    stream: bool = False
+) -> int:
+    """
+    Uses AI to score how well the candidate's skills/projects match the job.
+    Returns an integer 0–100. Returns 50 (neutral) on error so the job is not skipped.
+    """
+    import re as _re
+    from modules.ai.prompts import job_match_prompt
+
+    print_lg("-- CHECKING JOB SKILLS MATCH SCORE")
+    try:
+        prompt = job_match_prompt.format(
+            candidate_profile=candidate_profile[:2000],
+            job_title=job_title,
+            job_description=job_description[:2500]
+        )
+        messages = [{"role": "user", "content": prompt}]
+        raw = ai_completion(client, messages, stream=stream)
+        nums = _re.findall(r'\d+', str(raw))
+        if nums:
+            score = min(100, max(0, int(nums[0])))
+            print_lg(f"Job match score: {score}/100")
+            return score
+        return 50
+    except Exception as e:
+        ai_error_alert(f"Error checking job match. {apiCheckInstructions}", e)
+        return 50   # neutral — don't skip on error
 #>

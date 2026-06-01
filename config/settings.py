@@ -74,6 +74,27 @@ num_projects_in_resume = 4             # Positive integer
 resume_log_path = "all excels/resume_log.xlsx"
 
 
+# >>>>>>>>>>> Dynamic Salary <<<<<<<<<<<
+
+# Maximum expected salary for senior / specialist / research roles.
+# The bot picks a salary between desired_salary (in questions.py) and this value
+# based on seniority keywords found in the job description.
+max_desired_salary = 220000        # 2,20,000 INR upper ceiling
+
+# >>>>>>>>>>> Skills-Match Filter <<<<<<<<<<<
+
+# When True, uses Gemini AI to check if your resume skills cover the job requirements
+# before applying. Apply if match score >= min_job_match_score (below).
+# Prevents wasting applications on truly irrelevant roles (e.g., finance, law)
+# while ensuring you apply to any role your skills actually fulfill.
+enable_job_match_filter = True     # True or False
+
+# Minimum relevance score (0-100) required to apply.
+# 40 = apply if resume covers ~40% or more of requirements (recommended — generous)
+# 60 = stricter match required
+min_job_match_score = 40           # 0 to 100
+
+
 
 
 

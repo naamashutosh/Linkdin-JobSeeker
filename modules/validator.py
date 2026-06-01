@@ -154,6 +154,16 @@ def validate_search() -> None | ValueError | TypeError:
     check_int(priority_if_applicants_below, "priority_if_applicants_below", -1)
 
 
+from config.settings import *
+def validate_settings() -> None | ValueError | TypeError:
+    '''Validates settings.py variables.'''
+    global __validation_file_path
+    __validation_file_path = "config/settings.py"
+    check_int(max_desired_salary, "max_desired_salary", 0)
+    check_boolean(enable_job_match_filter, "enable_job_match_filter")
+    check_int(min_job_match_score, "min_job_match_score", 0)
+
+
 
 
 from config.secrets import *
@@ -175,7 +185,7 @@ def validate_secrets() -> None | ValueError | TypeError:
     
     ##> ------ Yang Li : MARKYangL - Feature ------
     # Validate DeepSeek configuration
-    check_string(ai_provider, "ai_provider", ["openai", "deepseek"])
+    check_string(ai_provider, "ai_provider", ["openai", "deepseek", "gemini"])
 
     ##> ------ Tim L : tulxoro - Refactor ------
     if ai_provider == "deepseek":

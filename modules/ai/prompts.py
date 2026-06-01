@@ -108,6 +108,35 @@ Response schema for `extract_skills` function
 """
 #<
 
+##> Job Skills-Match Filter
+job_match_prompt = """
+You are a resume screener. Given the candidate's skills/projects and a job description,
+rate how well the candidate's background covers the job requirements.
+
+Candidate Profile:
+{candidate_profile}
+
+Job Title: {job_title}
+Job Description:
+{job_description}
+
+Instructions:
+1. Check if the candidate's skills and projects fulfill the core technical requirements.
+2. Ignore exact title match — focus only on skills, domain knowledge, and project experience.
+3. Return ONLY a single integer between 0 and 100 representing match percentage.
+   - 0   = completely irrelevant (e.g., candidate is ML engineer, job is lawyer/accountant)
+   - 40  = partial match (some relevant skills)
+   - 70  = good match (most requirements covered)
+   - 100 = perfect match
+
+Return ONLY the number. No explanation. No text. Just the integer.
+"""
+"""
+Use: job_match_prompt.format(candidate_profile=..., job_title=..., job_description=...)
+"""
+#<
+
+
 ##> Custom Resume — Project Selection
 select_projects_prompt = """
 You are a resume customization expert. Select the {n} most relevant projects from the list below

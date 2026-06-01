@@ -61,7 +61,9 @@ def get_default_temp_profile() -> str:
     # Thanks to https://github.com/vinodbavage31 for suggestion!
     home = pathlib.Path.home()
     if sys.platform.startswith('win'):
-        return "--user-data-dir=C:\\temp\\auto-job-apply-profile"
+        profile_path = str(home / "AppData" / "Local" / "auto-job-apply-profile")
+        pathlib.Path(profile_path).mkdir(parents=True, exist_ok=True)
+        return f"--user-data-dir={profile_path}"
     elif sys.platform.startswith('linux'):
         return str(home / ".auto-job-apply-profile")
     return str(home / "Library" / "Application Support" / "Google" / "Chrome" / "auto-job-apply-profile")

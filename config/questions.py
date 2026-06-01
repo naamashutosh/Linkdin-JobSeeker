@@ -44,19 +44,20 @@ us_citizenship = "Non-citizen allowed to work for any employer"
 
 ## SOME ANNOYING QUESTIONS BY COMPANIES 🫠 ##
 
-# Expected CTC / desired salary (in INR for India roles)
-# 10 LPA is a reasonable expectation for a fresh IIT M.Tech graduate
-desired_salary = 1000000           # 10,00,000 INR = 10 LPA. Do NOT use quotes.
+# Expected CTC / desired salary (in INR)
+# This is the MINIMUM baseline. The bot dynamically raises it up to max_desired_salary
+# based on job seniority. See settings.py for max_desired_salary.
+desired_salary = 120000            # Minimum expected: 1,20,000 INR. Do NOT use quotes.
 '''
 Note: If question has the word "lakhs" in it (Example: What is your expected CTC in lakhs),
-then it will add '.' before last 5 digits and answer. Examples:
-* 2400000 will be answered as "24.00"
-* 1000000 will be answered as "10.00"
+then it will add '.' before last 5 digits and answer.
+* 120000 → "1.20" lakhs
+* 160000 → "1.60" lakhs
 And if asked in months, then it will divide by 12 and answer.
 '''
 
-# Current CTC — student/TA stipend (IIT Jammu TA stipend ~12,400/month)
-current_ctc = 0                    # 0 as currently a full-time M.Tech student. Do NOT use quotes.
+# Current CTC (TA stipend at IIT Jammu)
+current_ctc = 100000               # 1,00,000 INR current CTC. Do NOT use quotes.
 '''
 Note: If question has the word "lakhs" in it (Example: What is your current CTC in lakhs),
 then it will add '.' before last 5 digits and answer.
@@ -168,7 +169,7 @@ confidence_level = "7"             # Strong foundation, research publications, b
 
 ## Allow Manual Inputs
 # Should the tool pause before every submit application during easy apply to let you check the information?
-pause_before_submit = True         # True or False, Note: True or False are case-sensitive
+pause_before_submit = False         # True or False, Note: True or False are case-sensitive
 '''
 Note: Will be treated as False if `run_in_background = True`
 '''

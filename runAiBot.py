@@ -56,6 +56,9 @@ if enable_custom_resume:
     from modules.resume_customizer import generate_custom_resume, select_projects_with_ai
     from modules.resume_logger import log_resume_application
 
+if enable_job_match_filter and use_AI:
+    from modules.ai.openaiConnections import ai_check_job_match
+
 from typing import Literal
 
 
@@ -98,6 +101,53 @@ desired_salary = str(desired_salary)
 current_ctc_lakhs = str(round(current_ctc / 100000, 2))
 current_ctc_monthly = str(round(current_ctc/12, 2))
 current_ctc = str(current_ctc)
+
+# Dynamic salary — updated per job based on seniority (120K–220K range)
+_dynamic_salary_val = int(float(desired_salary))   # starts at min baseline
+dynamic_desired_salary         = desired_salary
+dynamic_desired_salary_lakhs   = desired_salary_lakhs
+dynamic_desired_salary_monthly = desired_salary_monthly
+
+
+def _calculate_dynamic_salary(job_description: str, job_title: str) -> None:
+    '''
+    Sets dynamic_desired_salary* globals based on seniority keywords in the job.
+    Tier 1 (entry/fresher/intern)  → min salary (desired_salary in questions.py)
+    Tier 2 (standard roles)        → mid salary
+    Tier 3 (senior/research/lead)  → max_desired_salary (settings.py)
+    '''
+    global dynamic_desired_salary, dynamic_desired_salary_lakhs, dynamic_desired_salary_monthly
+
+    text = (job_description + " " + job_title).lower()
+
+    _senior_keywords = [
+        "senior", "lead", "principal", "staff", "head of", "manager",
+        "director", "architect", "research scientist", "research engineer",
+        "specialist", "expert", "5g", "6g", "rf design", "phd", "doctorate",
+        "ieee", "publication", "patent"
+    ]
+    _entry_keywords = [
+        "intern", "internship", "fresher", "entry level", "entry-level",
+        "junior", "graduate trainee", "trainee", "0-1 year", "no experience"
+    ]
+
+    min_sal = int(float(desired_salary))
+    max_sal = max_desired_salary
+
+    if any(k in text for k in _senior_keywords):
+        salary_val = max_sal
+        tier = "Senior/Research"
+    elif any(k in text for k in _entry_keywords):
+        salary_val = min_sal
+        tier = "Entry/Fresher"
+    else:
+        salary_val = min_sal + int((max_sal - min_sal) * 0.4)   # ~40% between min and max
+        tier = "Standard"
+
+    dynamic_desired_salary         = str(salary_val)
+    dynamic_desired_salary_lakhs   = str(round(salary_val / 100000, 2))
+    dynamic_desired_salary_monthly = str(round(salary_val / 12, 2))
+    print_lg(f"DynamicSalary: {tier} role → ₹{salary_val:,} (monthly: ₹{round(salary_val/12):,})")
 
 notice_period_months = str(notice_period//30)
 notice_period_weeks = str(notice_period//7)
@@ -747,7 +797,7 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
                     elif 'week' in label:
                         answer = notice_period_weeks
                     else: answer = notice_period
-                elif 'salary' in label or 'compensation' in label or 'ctc' in label or 'pay' in label: 
+                elif 'salary' in label or 'compensation' in label or 'ctc' in label or 'pay' in label:
                     if 'current' in label or 'present' in label:
                         if 'month' in label:
                             answer = current_ctc_monthly
@@ -757,11 +807,11 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
                             answer = current_ctc
                     else:
                         if 'month' in label:
-                            answer = desired_salary_monthly
+                            answer = dynamic_desired_salary_monthly
                         elif 'lakh' in label:
-                            answer = desired_salary_lakhs
+                            answer = dynamic_desired_salary_lakhs
                         else:
-                            answer = desired_salary
+                            answer = dynamic_desired_salary
                 elif 'linkedin' in label: answer = linkedIn
                 elif 'website' in label or 'blog' in label or 'portfolio' in label or 'link' in label: answer = website
                 elif 'scale of 1-10' in label: answer = confidence_level
@@ -1133,6 +1183,33 @@ def apply_to_jobs(search_terms: list[str]) -> None:
                         rejected_jobs.add(job_id)
                         skip_count += 1
                         continue
+
+                    # ---- Dynamic Salary (set per job based on seniority) ----
+                    if description != "Unknown":
+                        _calculate_dynamic_salary(description, title)
+                    # ---- End Dynamic Salary ----
+
+                    # ---- Skills-Match Filter (apply if resume covers requirements) ----
+                    if enable_job_match_filter and use_AI and aiClient and description != "Unknown":
+                        try:
+                            match_score = ai_check_job_match(
+                                client=aiClient,
+                                job_title=title,
+                                job_description=description,
+                                candidate_profile=user_information_all
+                            )
+                            if match_score < min_job_match_score:
+                                _reason  = f"Low skills-match score ({match_score}/100 < threshold {min_job_match_score})"
+                                _message = f'\nJob: "{title}" at "{company}"\n\n{_reason}. Skills do not sufficiently match. Skipping!\n'
+                                print_lg(_message)
+                                failed_job(job_id, job_link, resume, date_listed, _reason, _message, "Skipped", screenshot_name)
+                                rejected_jobs.add(job_id)
+                                skip_count += 1
+                                continue
+                            print_lg(f'SkillsMatch: Score {match_score}/100 ≥ {min_job_match_score} — proceeding with application.')
+                        except Exception as e:
+                            print_lg(f"SkillsMatch: Check failed ({e}) — applying anyway.")
+                    # ---- End Skills-Match Filter ----
 
                     
                     if use_AI and description != "Unknown":
