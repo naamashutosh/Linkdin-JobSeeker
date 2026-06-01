@@ -18,6 +18,12 @@
 \titleformat{\section}{\normalfont\small\bfseries}{}{0em}{}[\titlerule]
 \titlespacing*{\section}{0pt}{3pt}{2pt}
 
+% Custom command used for project entries
+\newcommand{\resumeSubItem}[2]{%
+  \noindent\textbf{#1}\nopagebreak\\[-1pt]%
+  \noindent\small #2\vspace{3pt}%
+}
+
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
@@ -59,32 +65,21 @@ B.Tech --- Electronics and Communication Engineering; CGPA: 8.07 \hfill \textit{
 \section{Projects}
 \begin{flushleft}
 %%PROJECTS_START%%
-\textbf{Audio-Based Oral Cancer Detection} $|$ \textit{Clinical AI, Deep Learning, Speech Processing} \hfill \textit{July 2025 -- Present}
-\begin{itemize}
-  \item Developed an AI-driven clinical decision support system using Whisper Large embeddings, Mel Spectrograms, WST-2D features, and a CNN-Attention ensemble for binary/multi-class oral cancer classification.
-  \item Built robust preprocessing pipelines (noise reduction, normalization, framing) with multi-modal feature fusion, achieving high F1-score and ROC-AUC across multilingual patient datasets.
-  \item Designed the inference system as a scalable service for real-time screening workflows with modular, production-grade components for data-driven clinical decision making.
-\end{itemize}
-\textbf{Big Data Analytics Pipeline for Healthcare Insights} $|$ \textit{PySpark, SQL, Data Engineering, Cloud} \hfill \textit{May 2025 -- July 2025}
-\begin{itemize}
-  \item Designed a scalable ingestion and transformation pipeline using PySpark and SQL on clinical records (MIMIC-III synthetic subset), processing 2M+ patient records end-to-end.
-  \item Applied data governance (schema validation, deduplication, null-handling, lineage tracking); generated analytical dashboards integrated with AWS S3 from raw ingestion to business-ready reporting.
-\end{itemize}
-\textbf{Image-Based Oral Cancer Detection using Vision Transformers} $|$ \textit{Computer Vision, AI/ML} \hfill \textit{Feb 2025 -- April 2025}
-\begin{itemize}
-  \item Built a ViT + CNN hybrid model for early-stage oral lesion classification from 1,000+ annotated clinical and histopathological images, achieving 90.6\% accuracy.
-  \item Applied wavelet-based texture enhancement and contrast normalization; optimized inference latency using PyTorch C++ bindings for edge deployment.
-\end{itemize}
-\textbf{End-to-End NLP Pipeline for Multi-Domain Text Classification} $|$ \textit{NLP, Transformers, Data Insights} \hfill \textit{Jan 2025 -- March 2025}
-\begin{itemize}
-  \item Fine-tuned DistilBERT on AG News and 20 Newsgroups for multi-class classification achieving 93\%+ accuracy; applied data augmentation, SMOTE, and attention-weight + SHAP explainability layer.
-  \item Exported via ONNX Runtime and deployed as a FastAPI REST service, demonstrating scalable proof-of-concept production NLP analytics deployment.
-\end{itemize}
-\textbf{Multilingual Text \& Audio Classification for Interactive Systems} $|$ \textit{NLP, Transformers, MLOps} \hfill \textit{Mar 2022 -- Sep 2023}
-\begin{itemize}
-  \item Developed a multimodal transformer fusing Wav2Vec2 (audio) and BERT (text) for multilingual intent recognition, supporting real-time interactive application workflows.
-  \item Improved inference throughput by 20\% via ONNX quantization and dynamic batching; deployed via scalable API endpoint for low-latency client-facing system integration.
-\end{itemize}
+\resumeSubItem{Embedded Deployment of Oral Cancer Detection Model (Python/C++, Raspberry Pi 4B) \hfill {\normalsize Jan 2026 -- Present}}{
+Ported a TensorFlow/Keras model to Raspberry Pi 4B by rebuilding the architecture from scratch with h5py weight loading, resolving critical version incompatibilities. Developed a real-time pipeline for USB microphone input at 48 kHz resampled to 16 kHz with MFCC + Mel + WST-2D extraction; optimized with ONNX Runtime and PyTorch C++ bindings for sub-200 ms ARM inference. (IEEE EMBC)
+}
+
+\resumeSubItem{VMD-TriMCAN for Oral Cancer Detection (Signal Processing, Multi-Modal Attention) \hfill {\normalsize NCC 2026}}{
+Developed a Variational Mode Decomposition with Tri-Modal Cross-Attention Network for speech-based oral cancer screening, achieving $\sim$95.12\% accuracy. Accepted at NCC 2026.
+}
+
+\resumeSubItem{5G NR L1/L2 Protocol Stack Mini-Simulator (3GPP 38.xxx) \hfill {\normalsize 2025 -- Present}}{
+Implemented a Phase-1 NR modem stack covering PHY (LDPC encoder/decoder, OFDM modulator, DM-RS channel estimation, HARQ combining) and MAC (TB segmentation, CQI-based MCS selection, round-robin scheduling) in MATLAB/C++. Generated BLER vs SNR, throughput, and HARQ efficiency KPIs; verified compliance with 3GPP 38.211/212/214/321.
+}
+
+\resumeSubItem{Real-Time RF Signal Classification System (Deep Learning, Spectrum Monitoring) \hfill {\normalsize May 2025 -- July 2025}}{
+Built a CNN-based classifier for 11 wireless modulation types achieving 92\%+ accuracy on 220K I/Q samples from the RadioML dataset. Implemented a spectrogram-based neural pipeline for automatic modulation recognition.
+}
 %%PROJECTS_END%%
 \end{flushleft}
 
