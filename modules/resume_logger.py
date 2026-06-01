@@ -1,11 +1,12 @@
 '''
 Resume Logger Module
-Appends one row to an Excel workbook each time a custom resume is used.
+Appends one row to an Excel workbook each time a custom resume is applied.
 
-Columns logged:
-  Date Applied | Company | Job Title | Resume File Path | Projects Selected | Job Description (Snippet)
+Columns:
+  Date Applied | Company | Job Title | Resume File (Resume_Company.pdf) |
+  Projects Used | Job Description Snippet
 
-The Excel file is created automatically on first run.
+The Excel file auto-creates on first run with styled headers.
 '''
 
 import os
@@ -15,27 +16,18 @@ from modules.helpers import print_lg
 try:
     import openpyxl
     from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
-    _OPENPYXL_OK = True
+    _OK = True
 except ImportError:
-    _OPENPYXL_OK = False
-    print_lg(
-        "ResumeLogger: 'openpyxl' not installed — Excel logging disabled.\n"
-        "  → Install it with:  pip install openpyxl"
-    )
+    _OK = False
+    print_lg("ResumeLogger: 'openpyxl' not installed. Run: pip install openpyxl")
 
 
-_HEADERS = [
-    "Date Applied",
-    "Company",
-    "Job Title",
-    "Resume File Path",
-    "Projects Selected",
-    "Job Description (Snippet)",
-]
-
-_HEADER_COLOR  = "4472C4"   # blue header fill
-_ALT_ROW_COLOR = "DCE6F1"   # light blue alternating row fill
-_COL_WIDTHS    = [22, 28, 32, 60, 60, 60]
+_HEADERS    = ["Date Applied", "Company", "Job Title",
+               "Resume File (click to open)", "Projects Used",
+               "Job Description (Snippet)"]
+_COL_WIDTHS = [22, 28, 35, 60, 70, 60]
+_HDR_COLOR  = "1F4E79"   # dark blue header
+_ALT_COLOR  = "D6E4F0"   # light blue alternate rows
 
 
 def log_resume_application(
@@ -47,14 +39,16 @@ def log_resume_application(
     log_path: str = "all excels/resume_log.xlsx"
 ) -> None:
     '''
-    Appends a row to the resume log Excel file.
-    Creates the file with a styled header row if it does not exist yet.
+    Appends one application row to the Excel resume log.
+    Creates the file with styled headers if it does not exist.
     '''
-    if not _OPENPYXL_OK:
+    if not _OK:
         return
 
     try:
-        os.makedirs(os.path.dirname(log_path) if os.path.dirname(log_path) else ".", exist_ok=True)
+        log_dir = os.path.dirname(log_path)
+        if log_dir:
+            os.makedirs(log_dir, exist_ok=True)
 
         if os.path.exists(log_path):
             wb = openpyxl.load_workbook(log_path)
@@ -66,65 +60,60 @@ def log_resume_application(
             _write_header(ws)
 
         row_idx = ws.max_row + 1
+        abs_path = os.path.abspath(resume_path) if resume_path else "Default resume"
 
         row_data = [
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            datetime.now().strftime("%Y-%m-%d %H:%M"),
             company or "Unknown",
             job_title or "Unknown",
-            os.path.abspath(resume_path) if resume_path else "Default",
-            ", ".join(selected_projects) if selected_projects else "N/A",
+            abs_path,
+            ", ".join(selected_projects) if selected_projects else "Default resume used",
             (job_description or "")[:400],
         ]
 
-        # Apply alternating row fill
-        fill = PatternFill(
-            start_color=_ALT_ROW_COLOR,
-            end_color=_ALT_ROW_COLOR,
-            fill_type="solid"
-        ) if row_idx % 2 == 0 else None
-
-        thin_border = Border(
+        thin = Border(
             left=Side(style="thin"), right=Side(style="thin"),
             top=Side(style="thin"), bottom=Side(style="thin")
         )
+        fill = PatternFill(start_color=_ALT_COLOR, end_color=_ALT_COLOR,
+                           fill_type="solid") if row_idx % 2 == 0 else None
 
         for col_idx, value in enumerate(row_data, start=1):
             cell = ws.cell(row=row_idx, column=col_idx, value=value)
+            cell.border = thin
             cell.alignment = Alignment(wrap_text=True, vertical="top")
-            cell.border = thin_border
             if fill:
                 cell.fill = fill
 
-        # Refresh column widths if they shrank
+        # Keep column widths at least at defined minimums
         for col_idx, width in enumerate(_COL_WIDTHS, start=1):
             letter = ws.cell(row=1, column=col_idx).column_letter
-            current = ws.column_dimensions[letter].width
-            ws.column_dimensions[letter].width = max(current or 0, width)
+            ws.column_dimensions[letter].width = max(
+                ws.column_dimensions[letter].width or 0, width
+            )
 
         wb.save(log_path)
-        print_lg(f"ResumeLogger: Logged → {log_path}  (row {row_idx})")
+        print_lg(f"ResumeLogger: ✅ Logged row {row_idx} → {log_path}")
+        print_lg(f"ResumeLogger:    Resume: {abs_path}")
 
     except Exception as e:
-        print_lg(f"ResumeLogger: Failed to write log — {e}")
+        print_lg(f"ResumeLogger: Failed — {e}")
 
 
 def _write_header(ws) -> None:
-    '''Writes a styled header row to a fresh worksheet.'''
-    header_fill   = PatternFill(start_color=_HEADER_COLOR, end_color=_HEADER_COLOR, fill_type="solid")
-    header_font   = Font(color="FFFFFF", bold=True, size=11)
-    header_align  = Alignment(horizontal="center", vertical="center", wrap_text=True)
-    thin_border   = Border(
+    hdr_fill  = PatternFill(start_color=_HDR_COLOR, end_color=_HDR_COLOR, fill_type="solid")
+    hdr_font  = Font(color="FFFFFF", bold=True, size=11)
+    hdr_align = Alignment(horizontal="center", vertical="center", wrap_text=True)
+    thin      = Border(
         left=Side(style="thin"), right=Side(style="thin"),
         top=Side(style="thin"), bottom=Side(style="thin")
     )
-
     for col_idx, (header, width) in enumerate(zip(_HEADERS, _COL_WIDTHS), start=1):
         cell = ws.cell(row=1, column=col_idx, value=header)
-        cell.fill   = header_fill
-        cell.font   = header_font
-        cell.alignment = header_align
-        cell.border = thin_border
+        cell.fill      = hdr_fill
+        cell.font      = hdr_font
+        cell.alignment = hdr_align
+        cell.border    = thin
         ws.column_dimensions[cell.column_letter].width = width
-
-    ws.row_dimensions[1].height = 22
+    ws.row_dimensions[1].height = 25
     ws.freeze_panes = "A2"

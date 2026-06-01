@@ -1189,26 +1189,35 @@ def apply_to_jobs(search_terms: list[str]) -> None:
                         _calculate_dynamic_salary(description, title)
                     # ---- End Dynamic Salary ----
 
-                    # ---- Skills-Match Filter (apply if resume covers requirements) ----
+                    # ---- Skills-Match Filter ----
                     if enable_job_match_filter and use_AI and aiClient and description != "Unknown":
                         try:
-                            match_score = ai_check_job_match(
-                                client=aiClient,
+                            from modules.ai.prompts import job_match_prompt
+                            _match_prompt = job_match_prompt.format(
+                                candidate_profile=user_information_all[:2000],
                                 job_title=title,
-                                job_description=description,
-                                candidate_profile=user_information_all
+                                job_description=description[:2500]
                             )
+                            if ai_provider.lower() == "gemini":
+                                _raw_score = gemini_answer_question(aiClient, _match_prompt)
+                            elif ai_provider.lower() == "deepseek":
+                                _raw_score = deepseek_answer_question(aiClient, _match_prompt)
+                            else:
+                                _raw_score = ai_answer_question(aiClient, _match_prompt)
+                            _nums = re.findall(r'\d+', str(_raw_score))
+                            match_score = min(100, max(0, int(_nums[0]))) if _nums else 50
+                            print_lg(f'SkillsMatch: Score {match_score}/100 (threshold: {min_job_match_score})')
                             if match_score < min_job_match_score:
-                                _reason  = f"Low skills-match score ({match_score}/100 < threshold {min_job_match_score})"
-                                _message = f'\nJob: "{title}" at "{company}"\n\n{_reason}. Skills do not sufficiently match. Skipping!\n'
+                                _reason  = f"Low skills-match score ({match_score}/100 < {min_job_match_score})"
+                                _message = f'\nJob: "{title}" at "{company}"\n\n{_reason}. Skipping!\n'
                                 print_lg(_message)
                                 failed_job(job_id, job_link, resume, date_listed, _reason, _message, "Skipped", screenshot_name)
                                 rejected_jobs.add(job_id)
                                 skip_count += 1
                                 continue
-                            print_lg(f'SkillsMatch: Score {match_score}/100 ≥ {min_job_match_score} — proceeding with application.')
+                            print_lg(f'SkillsMatch: ✅ Score {match_score}/100 — applying.')
                         except Exception as e:
-                            print_lg(f"SkillsMatch: Check failed ({e}) — applying anyway.")
+                            print_lg(f"SkillsMatch: Error ({e}) — applying anyway.")
                     # ---- End Skills-Match Filter ----
 
                     
