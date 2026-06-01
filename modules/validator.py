@@ -149,6 +149,9 @@ def validate_search() -> None | ValueError | TypeError:
     check_boolean(smart_experience_filter, "smart_experience_filter")
     check_int(max_experience_to_apply, "max_experience_to_apply", 0)
     check_boolean(apply_to_freshers_directly, "apply_to_freshers_directly")
+    check_boolean(prefer_recent_24h_jobs, "prefer_recent_24h_jobs")
+    check_int(skip_if_applicants_exceed, "skip_if_applicants_exceed", -1)
+    check_int(priority_if_applicants_below, "priority_if_applicants_below", -1)
 
 
 

@@ -72,6 +72,28 @@ in_your_network = False            # True or False, Note: True or False are case
 fair_chance_employer = False       # True or False, Note: True or False are case-sensitive
 
 
+# >>>>>>>>>>> Recency Priority <<<<<<<<<<<
+
+# When True, forces date_posted = "Past 24 hours" and sort_by = "Most recent" at startup.
+# This ensures the bot always sees the freshest jobs first and ignores older listings.
+# Overrides whatever date_posted and sort_by are set to above.
+prefer_recent_24h_jobs = True      # True or False
+
+
+# >>>>>>>>>>> Applicant Count Priority Filter <<<<<<<<<<<
+
+# Skip this job if the number of applicants has already reached or exceeded this value.
+# Helps avoid applying to crowded listings where chances are very low.
+# Set to -1 to disable this check entirely.
+# Recommended: 100 (skip jobs where 100+ people already applied)
+skip_if_applicants_exceed = 100    # -1 to disable, or a positive integer
+
+# Jobs with fewer applicants than this threshold are flagged as HIGH PRIORITY in the logs.
+# Set to -1 to disable priority logging.
+# Recommended: 50 (flag jobs with < 50 applicants as high priority)
+priority_if_applicants_below = 50  # -1 to disable, or a positive integer
+
+
 ## >>>>>>>>>>> RELATED SETTING <<<<<<<<<<<
 
 # Pause after applying filters to let you modify the search results and filters?

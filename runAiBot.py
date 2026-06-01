@@ -366,11 +366,77 @@ def check_blacklist(rejected_jobs: set, job_id: str, company: str, blacklisted_c
 def extract_years_of_experience(text: str) -> int:
     # Extract all patterns like '10+ years', '5 years', '3-5 years', etc.
     matches = re.findall(re_experience, text)
-    if len(matches) == 0: 
+    if len(matches) == 0:
         print_lg(f'\n{text}\n\nCouldn\'t find experience requirement in About the Job!')
         return 0
     return max([int(match) for match in matches if int(match) <= 12])
 
+
+def get_applicant_count(jobs_top_card) -> int:
+    '''
+    Scrapes the applicant count shown on LinkedIn's job top card.
+
+    Handles all formats LinkedIn uses:
+    - "Be among the first 25 applicants"  → 25
+    - "Over 100 applicants"               → 100
+    - "200+ applicants"                   → 200
+    - "47 applicants"                     → 47
+
+    Returns -1 if the count cannot be determined (unknown / not shown).
+    '''
+    try:
+        insight_text = None
+
+        # LinkedIn 2024/2025 — insight pills inside the top card
+        _xpaths = [
+            './/span[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "applicant")]',
+            './/li[contains(@class,"insight")]//span[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "applicant")]',
+        ]
+        for xp in _xpaths:
+            try:
+                el = jobs_top_card.find_element(By.XPATH, xp)
+                candidate = el.text.strip().lower()
+                if 'applicant' in candidate:
+                    insight_text = candidate
+                    break
+            except NoSuchElementException:
+                continue
+
+        # Broader page-level fallback
+        if not insight_text:
+            try:
+                _page_spans = driver.find_elements(By.XPATH,
+                    '//span[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "applicant")]'
+                )
+                for el in _page_spans:
+                    candidate = el.text.strip().lower()
+                    if 'applicant' in candidate and re.search(r'\d', candidate):
+                        insight_text = candidate
+                        break
+            except Exception:
+                pass
+
+        if not insight_text:
+            print_lg("ApplicantFilter: Could not find applicant count on this page.")
+            return -1
+
+        print_lg(f"ApplicantFilter: insight text → '{insight_text}'")
+
+        # "be among the first 25 applicants"
+        m = re.search(r'first\s+(\d+)', insight_text)
+        if m:
+            return int(m.group(1))
+
+        # "over 100 applicants" / "200+ applicants" / "47 applicants"
+        nums = re.findall(r'(\d+)', insight_text)
+        if nums:
+            return int(nums[0])
+
+        return -1
+
+    except Exception as e:
+        print_lg(f"ApplicantFilter: Error reading applicant count — {e}")
+        return -1
 
 
 def get_job_description(
@@ -1040,6 +1106,26 @@ def apply_to_jobs(search_terms: list[str]) -> None:
                         print_lg("Failed to calculate the date posted!",e)
 
 
+                    # ---- Applicant Count Priority Filter ----
+                    applicant_count = get_applicant_count(jobs_top_card)
+
+                    if skip_if_applicants_exceed > -1 and applicant_count != -1 and applicant_count >= skip_if_applicants_exceed:
+                        _reason  = f"Too many applicants ({applicant_count} ≥ {skip_if_applicants_exceed})"
+                        _message = f'\nJob: "{title}" at "{company}"\n\n{_reason}. Skipping this job!\n'
+                        print_lg(_message)
+                        failed_job(job_id, job_link, resume, date_listed, _reason, _message, "Skipped", screenshot_name)
+                        rejected_jobs.add(job_id)
+                        skip_count += 1
+                        continue
+
+                    if priority_if_applicants_below > -1 and applicant_count != -1 and applicant_count < priority_if_applicants_below:
+                        print_lg(
+                            f'⭐ HIGH PRIORITY: "{title}" at "{company}" — only {applicant_count} applicant(s) so far!'
+                        )
+                    elif applicant_count != -1:
+                        print_lg(f'ApplicantFilter: {applicant_count} applicants — within acceptable range, proceeding.')
+                    # ---- End Applicant Count Filter ----
+
                     description, experience_required, skip, reason, message = get_job_description()
                     if skip:
                         print_lg(message)
@@ -1294,7 +1380,15 @@ def main() -> None:
         global linkedIn_tab, tabs_count, useNewResume, aiClient
         alert_title = "Error Occurred. Closing Browser!"
         validate_config()
-        
+
+        # ---- Recency Priority: override sort/date settings when prefer_recent_24h_jobs is True ----
+        if prefer_recent_24h_jobs:
+            global date_posted, sort_by
+            date_posted = "Past 24 hours"
+            sort_by = "Most recent"
+            print_lg("RecencyFilter: prefer_recent_24h_jobs = True → date_posted='Past 24 hours', sort_by='Most recent'")
+        # ---- End Recency Priority ----
+
         if not os.path.exists(default_resume_path):
             pyautogui.alert(text='Your default resume "{}" is missing! Please update it\'s folder path "default_resume_path" in config.py\n\nOR\n\nAdd a resume with exact name and path (check for spelling mistakes including cases).\n\n\nFor now the bot will continue using your previous upload from LinkedIn!'.format(default_resume_path), title="Missing Resume", button="OK")
             useNewResume = False
