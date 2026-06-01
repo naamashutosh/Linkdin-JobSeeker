@@ -3,8 +3,13 @@ __pycache__
 .idea
 
 all excels
-all resumes
 logs
+
+# Ignore generated resumes and PDFs but keep the LaTeX template
+all resumes/*
+!all resumes/template/
+all resumes/template/*
+!all resumes/template/resume_template.tex
 
 old
 

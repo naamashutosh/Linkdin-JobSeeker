@@ -146,6 +146,9 @@ def validate_search() -> None | ValueError | TypeError:
     check_boolean(security_clearance, "security_clearance")
     check_boolean(did_masters, "did_masters")
     check_int(current_experience, "current_experience", -1)
+    check_boolean(smart_experience_filter, "smart_experience_filter")
+    check_int(max_experience_to_apply, "max_experience_to_apply", 0)
+    check_boolean(apply_to_freshers_directly, "apply_to_freshers_directly")
 
 
 

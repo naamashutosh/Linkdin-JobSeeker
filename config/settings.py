@@ -54,6 +54,26 @@ stop_date_cycle_at_24hr = True      # True or False, Note: True or False are cas
 generated_resume_path = "all resumes/" # (In Development)
 
 
+# >>>>>>>>>>> Custom Resume (AI Project Selector) <<<<<<<<<<<
+
+# Enable AI-powered per-job resume customization.
+# Requires use_AI = True in secrets.py and a valid LaTeX template below.
+enable_custom_resume = False            # True or False
+
+# Path to your base LaTeX resume template (.tex).
+# The template MUST contain these two marker lines exactly as shown:
+#     %%PROJECTS_START%%
+#     %%PROJECTS_END%%
+# Everything between them is replaced with the AI-selected projects.
+latex_template_path = "all resumes/template/resume_template.tex"
+
+# How many projects to include per resume (3 or 4 recommended).
+num_projects_in_resume = 4             # Positive integer
+
+# Path to the Excel log that records which resume was used for each application.
+resume_log_path = "all excels/resume_log.xlsx"
+
+
 
 
 

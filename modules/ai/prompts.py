@@ -108,6 +108,34 @@ Response schema for `extract_skills` function
 """
 #<
 
+##> Custom Resume — Project Selection
+select_projects_prompt = """
+You are a resume customization expert. Select the {n} most relevant projects from the list below
+that best match the given job description.
+
+Job Title: {job_title}
+
+Job Description:
+{job_description}
+
+Available Projects (JSON):
+{projects_json}
+
+Rules:
+1. Rank by: (a) tech stack overlap, (b) domain/role relevance, (c) impact and complexity.
+2. Select EXACTLY {n} projects.
+3. Use the EXACT "name" strings from the JSON above.
+4. Return ONLY a valid JSON array — no explanation, no markdown, no extra text.
+
+Example output format:
+["Project Name 1", "Project Name 2", "Project Name 3", "Project Name 4"]
+"""
+"""
+Use `select_projects_prompt.format(n=n, job_title=..., job_description=..., projects_json=...)`
+"""
+#<
+
+
 ##> ------ Dheeraj Deshwal : dheeraj9811 Email:dheeraj20194@iiitd.ac.in/dheerajdeshwal9811@gmail.com - Feature ------
 ##> Answer Questions
 # Structure of messages = `[{"role": "user", "content": answer_questions_prompt}]`

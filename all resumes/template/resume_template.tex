@@ -1,0 +1,169 @@
+%% =============================================================================
+%% RESUME TEMPLATE — Auto Job Applier (LinkedIn Bot)
+%%
+%% HOW THE BOT USES THIS FILE:
+%%   1. The bot reads this file for every job application.
+%%   2. It replaces everything between %%PROJECTS_START%% and %%PROJECTS_END%%
+%%      with the AI-selected projects from config/projects.py.
+%%   3. The modified .tex is compiled to PDF and uploaded as your resume.
+%%
+%% WHAT YOU NEED TO DO:
+%%   - Replace the placeholder sections (marked with TODO) with YOUR content.
+%%   - Keep the %%PROJECTS_START%% and %%PROJECTS_END%% markers exactly as-is.
+%%   - Make sure the \resumeProjectHeading / \resumeItem commands in your
+%%     projects.py entries use the same commands defined in this template.
+%%
+%% COMPILE TEST:  pdflatex resume_template.tex
+%% =============================================================================
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\input{glyphtounicode}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Section formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+\pdfgentounicode=1
+
+% ---- Custom commands --------------------------------------------------------
+
+\newcommand{\resumeItem}[1]{
+  \item\small{#1 \vspace{-2pt}}
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+% =============================================================================
+\begin{document}
+
+% ---- Header -----------------------------------------------------------------
+\begin{center}
+    % TODO: Replace with your name
+    \textbf{\Huge \scshape Your Full Name} \\ \vspace{1pt}
+    % TODO: Replace with your contact info
+    \small +91-XXXXXXXXXX $|$
+    \href{mailto:your.email@example.com}{\underline{your.email@example.com}} $|$
+    \href{https://linkedin.com/in/yourprofile}{\underline{linkedin.com/in/yourprofile}} $|$
+    \href{https://github.com/yourusername}{\underline{github.com/yourusername}}
+\end{center}
+
+% ---- Education --------------------------------------------------------------
+\section{Education}
+  \resumeSubHeadingListStart
+    % TODO: Replace with your education
+    \resumeSubheading
+      {Your University Name}{City, State}
+      {Bachelor of Technology in Computer Science}{Aug. 2021 -- May 2025}
+    \resumeSubheading
+      {Your School Name (if relevant)}{City, State}
+      {Higher Secondary (Class XII) -- 95\%}{Apr. 2019 -- Mar. 2021}
+  \resumeSubHeadingListEnd
+
+% ---- Experience -------------------------------------------------------------
+\section{Experience}
+  \resumeSubHeadingListStart
+    % TODO: Replace with your work experience
+    \resumeSubheading
+      {Software Engineering Intern}{May 2024 -- Jul. 2024}
+      {Company Name}{City, Country (Remote)}
+      \resumeItemListStart
+        \resumeItem{Built a feature that did X resulting in Y improvement}
+        \resumeItem{Collaborated with team of Z engineers to ship N releases}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+% ---- Projects ---------------------------------------------------------------
+\section{Projects}
+  \resumeSubHeadingListStart
+%%PROJECTS_START%%
+    % This section is automatically replaced by the bot.
+    % The AI selects the best matching projects from config/projects.py
+    % and inserts their latex_entry content here.
+    %
+    % Leave this as a placeholder or add a default project that will
+    % appear when enable_custom_resume = False in settings.py.
+    \resumeProjectHeading
+      {\textbf{Default Project} $|$ \emph{Python, Placeholder}}{2024}
+      \resumeItemListStart
+        \resumeItem{This is a placeholder — add your projects to config/projects.py}
+      \resumeItemListEnd
+%%PROJECTS_END%%
+  \resumeSubHeadingListEnd
+
+% ---- Technical Skills -------------------------------------------------------
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     % TODO: Replace with your skills
+     \textbf{Languages}{: Python, C/C++, Java, JavaScript, SQL} \\
+     \textbf{Frameworks}{: PyTorch, TensorFlow, FastAPI, React, Django} \\
+     \textbf{Tools}{: Git, Docker, Kubernetes, Linux, AWS, GCP} \\
+     \textbf{Libraries}{: Pandas, NumPy, Scikit-learn, OpenCV, Hugging Face}
+    }}
+ \end{itemize}
+
+% ---- Certifications / Achievements (optional) --------------------------------
+\section{Certifications \& Achievements}
+  \resumeSubHeadingListStart
+    % TODO: Add your certifications or remove this section
+    \resumeProjectHeading
+      {\textbf{AWS Certified Cloud Practitioner}}{2024}
+      \resumeItemListStart
+        \resumeItem{Passed with score 890/1000}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+\end{document}

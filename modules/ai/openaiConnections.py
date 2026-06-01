@@ -256,6 +256,42 @@ def ai_answer_question(
 ##<
 
 
+def ai_select_projects(
+    client: OpenAI,
+    job_title: str,
+    job_description: str,
+    projects_json: str,
+    n: int = 4,
+    stream: bool = False
+) -> list:
+    """
+    Uses the configured OpenAI-compatible model to select the best N projects
+    for a job.  Returns a list of project name strings (empty list on failure).
+    """
+    import re as _re, json as _json
+    from modules.ai.prompts import select_projects_prompt
+
+    print_lg("-- SELECTING BEST PROJECTS FOR CUSTOM RESUME")
+    try:
+        prompt = select_projects_prompt.format(
+            n=n,
+            job_title=job_title,
+            job_description=job_description[:3000],
+            projects_json=projects_json
+        )
+        messages = [{"role": "user", "content": prompt}]
+        raw = ai_completion(client, messages, stream=stream)
+
+        match = _re.search(r'\[.*?\]', str(raw), _re.DOTALL)
+        if match:
+            return _json.loads(match.group())
+        print_lg(f"Could not parse project selection response: {str(raw)[:300]}")
+        return []
+    except Exception as e:
+        ai_error_alert(f"Error selecting resume projects. {apiCheckInstructions}", e)
+        return []
+
+
 def ai_gen_experience(
     client: OpenAI, 
     job_description: str, about_company: str, 

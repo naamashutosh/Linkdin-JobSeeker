@@ -13,6 +13,9 @@ Click on above image to watch the demo or use this link https://youtu.be/gMbB1fW
 - [Index](#-content)
 - [Install](#%EF%B8%8F-how-to-install)
 - [Configure](#-how-to-configure)
+- [New Features](#-new-features-added)
+  - [AI Custom Resume Generator](#1-ai-custom-resume-generator-per-job-latex-resume)
+  - [Smart Experience Filter](#2-smart-experience-filter-for-fresh-graduates--mtech-holders)
 - [Contributor Guidelines](#‍-contributor-guidelines)
 - [Updates](%EF%B8%8F-major-updates-history)
 - [Disclaimer](#-disclaimer)
@@ -61,6 +64,144 @@ Click on above image to watch the tutorial for installation and configuration or
 
 <br>
 
+
+---
+
+## 🚀 New Features Added
+
+> These features extend the original bot with AI-powered per-job resume customization and a smart experience filter designed for fresh graduates and MTech holders.
+
+---
+
+### 1. AI Custom Resume Generator (Per-Job LaTeX Resume)
+
+For every job application, the bot automatically:
+1. Reads the job description
+2. Uses your configured AI (OpenAI / DeepSeek / Gemini) to select the **best 3–4 projects** from your personal project list
+3. Injects those projects into your **LaTeX resume template**
+4. Compiles to a **PDF named after the company** and saves it in `all resumes/<CompanyName>/`
+5. Uploads that custom PDF to the LinkedIn Easy Apply form
+6. Logs the application to **`all excels/resume_log.xlsx`** (company, job title, resume path, selected projects, timestamp)
+
+#### Setup
+
+**Step 1 — Add your projects** to `config/projects.py`.  
+Each entry needs these fields:
+
+```python
+{
+    "name": "Your Project Name",
+    "description": "One or two sentences about what this project does (used by AI for matching).",
+    "domains": ["Machine Learning", "Computer Vision"],   # domain tags
+    "tech_stack": ["Python", "PyTorch", "OpenCV"],
+    "latex_entry": r"""
+        \resumeProjectHeading
+          {\textbf{Your Project Name} $|$ \emph{Python, PyTorch}}{2024}
+          \resumeItemListStart
+            \resumeItem{What you built and the result}
+            \resumeItem{Key technical achievement}
+          \resumeItemListEnd"""
+}
+```
+
+**Step 2 — Prepare your LaTeX template** at `all resumes/template/resume_template.tex`.  
+A sample template is already provided. Open it and replace the placeholder sections with your real details.  
+The **only mandatory requirement** is that your projects section contains these two marker lines exactly:
+```latex
+%%PROJECTS_START%%
+%%PROJECTS_END%%
+```
+The bot replaces everything between them for each job.
+
+**Step 3 — Install LaTeX** (required to compile `.tex` → `.pdf`):
+```
+winget install MiKTeX.MiKTeX
+```
+> If pdflatex is not found, the bot automatically tries an online compilation fallback (latexonline.cc).
+
+**Step 4 — Install the Excel logger:**
+```
+pip install openpyxl
+```
+
+**Step 5 — Enable in `config/settings.py`:**
+```python
+enable_custom_resume    = True
+latex_template_path     = "all resumes/template/resume_template.tex"
+num_projects_in_resume  = 4       # 3 or 4 recommended
+resume_log_path         = "all excels/resume_log.xlsx"
+```
+
+**Step 6 — Ensure AI is enabled** in `config/secrets.py`:
+```python
+use_AI = True
+```
+
+#### What Gets Saved
+
+```
+all resumes/
+└── Google/
+    ├── Google_ML_Engineer_resume.tex    ← editable source
+    └── Google_ML_Engineer_resume.pdf    ← uploaded to LinkedIn
+
+all excels/
+└── resume_log.xlsx     ← Date | Company | Job Title | Resume Path | Projects Used
+```
+
+---
+
+### 2. Smart Experience Filter (for Fresh Graduates / MTech Holders)
+
+The bot now applies a nuanced experience-level check before deciding to apply.
+
+#### Decision Logic
+
+```
+Job description received
+        │
+        ▼
+Contains "fresher" / "no experience" / "entry level" /
+"0-1 years" / "recent graduate"  OR  parsed experience == 0?
+        │ YES ──► ✅  Apply directly (no further checks)
+        │
+        ▼
+"master" / "mtech" / "postgraduate" mentioned
+AND experience required ≤ max_experience_to_apply (1 yr)?
+        │ YES ──► ✅  Apply  (MTech / Master's degree qualifies)
+        │
+        ▼
+Experience required > max_experience_to_apply?
+        │ YES ──► ❌  Skip (too senior for this profile)
+        │ NO  ──► ✅  Apply
+```
+
+#### Settings in `config/search.py`
+
+| Setting | Default | Description |
+|---|---|---|
+| `smart_experience_filter` | `True` | Enable the new logic (`False` reverts to original `current_experience` check) |
+| `max_experience_to_apply` | `1` | Skip jobs requiring more than N years of experience |
+| `apply_to_freshers_directly` | `True` | Always apply to fresher / entry-level / 0-experience roles |
+
+> **For a fresh MTech graduate:** Keep all three defaults. You do **not** need to change `current_experience` — it is bypassed when `smart_experience_filter = True`.
+
+#### Examples
+
+| Job Description Says | Parsed Exp | Action |
+|---|---|---|
+| "Fresher / no experience required" | 0 | ✅ Apply directly |
+| "0–1 years experience" | 0 | ✅ Apply directly |
+| "Master's degree required, 1 yr exp" | 1 | ✅ Apply (MTech qualifies) |
+| "2+ years experience required" | 2 | ❌ Skip |
+| "3–5 years, Senior Engineer" | 3 | ❌ Skip |
+| "5+ years experience" | 5 | ❌ Skip |
+
+---
+
+[back to index](#-content)
+
+<br>
 
 ## 🧑‍💻 Contributor Guidelines
 Thank you for your efforts and being a part of the community. All contributions are appreciated no matter how small or big. Once you contribute to the code base, your work will be remembered forever.
@@ -192,6 +333,17 @@ Once your code is tested, your changes will be merged to the `main` branch in ne
 [back to index](#-content)
 
 ## 🗓️ Major Updates History:
+
+### June 1, 2026
+- **AI Custom Resume Generator**: Bot now auto-selects 3–4 best-matching projects from a user-defined project list (`config/projects.py`) for each job using AI, injects them into a LaTeX template, compiles to PDF, and uploads the custom resume
+- **Per-company resume folders**: Each generated resume is saved in `all resumes/<CompanyName>/` with the company and job title in the filename
+- **Resume application log**: Every application is logged to `all excels/resume_log.xlsx` (date, company, job title, resume path, projects used)
+- **Smart Experience Filter**: New nuanced experience-level filter for fresh graduates and MTech holders — automatically applies to 0–1 year / no-experience / entry-level jobs and skips 2+ year roles; MTech degree is recognized as a qualifier when master's degree is mentioned
+- New config settings: `enable_custom_resume`, `latex_template_path`, `num_projects_in_resume`, `resume_log_path` in `settings.py`; `smart_experience_filter`, `max_experience_to_apply`, `apply_to_freshers_directly` in `search.py`
+- New modules: `modules/resume_customizer.py`, `modules/resume_logger.py`
+- Added `ai_select_projects()` to `modules/ai/openaiConnections.py`
+- Sample LaTeX resume template provided at `all resumes/template/resume_template.tex`
+
 ### Jan 20, 2026
 - You can now simultaneously use chrome, while bot continues applying in a new window
 

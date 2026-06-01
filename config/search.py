@@ -96,12 +96,29 @@ bad_words = ["US Citizen","USA Citizen","No C2C", "No Corp2Corp", ".NET", "Embed
 # Do you have an active Security Clearance? (True for Yes and False for No)
 security_clearance = False         # True or False, Note: True or False are case-sensitive
 
-# Do you have a Masters degree? (True for Yes and False for No). If True, the tool will apply to jobs containing the word 'master' in their job description and if it's experience required <= current_experience + 2 and current_experience is not set as -1. 
+# Do you have a Masters degree? (True for Yes and False for No). If True, the tool will apply to jobs containing the word 'master' in their job description and if it's experience required <= current_experience + 2 and current_experience is not set as -1.
 did_masters = True                 # True or False, Note: True or False are case-sensitive
 
 # Avoid applying to jobs if their required experience is above your current_experience. (Set value as -1 if you want to apply to all ignoring their required experience...)
 current_experience = 5             # Integers > -2 (Ex: -1, 0, 1, 2, 3, 4...)
 ##
+
+
+# >>>>>>>>>>> Smart Experience Filter (for Fresh Graduates / MTech Holders) <<<<<<<<<<<
+
+# Enable the smart experience filter.
+# When True, the rules below override the basic current_experience check above.
+smart_experience_filter = True     # True or False
+
+# Maximum years of experience a job can require before it is skipped.
+# Jobs asking for 0–N years will be considered; jobs asking for N+1 or more will be skipped.
+# Recommended: 1 (apply to fresher / 0-1 year roles only)
+max_experience_to_apply = 1        # Positive integer
+
+# When True, jobs with explicit no-experience / entry-level / fresher signals are
+# always applied to regardless of the max_experience_to_apply limit.
+# (This is almost always what you want — leave it True.)
+apply_to_freshers_directly = True  # True or False
 
 
 

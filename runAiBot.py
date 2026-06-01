@@ -51,6 +51,11 @@ if use_AI:
     from modules.ai.deepseekConnections import deepseek_create_client, deepseek_extract_skills, deepseek_answer_question
     from modules.ai.geminiConnections import gemini_create_client, gemini_extract_skills, gemini_answer_question
 
+if enable_custom_resume:
+    from config.projects import projects_list as all_projects
+    from modules.resume_customizer import generate_custom_resume, select_projects_with_ai
+    from modules.resume_logger import log_resume_application
+
 from typing import Literal
 
 
@@ -72,6 +77,10 @@ full_name = first_name + " " + middle_name + " " + last_name if middle_name else
 
 useNewResume = True
 randomly_answered_questions = set()
+
+# Per-job resume tracking (updated each iteration when enable_custom_resume is True)
+current_resume_path = default_resume_path
+current_selected_projects = []
 
 tabs_count = 1
 easy_applied_count = 0
@@ -404,14 +413,71 @@ def get_job_description(
             skipReason = "Asking for Security clearance"
             skip = True
         if not skip:
-            if did_masters and 'master' in jobDescriptionLow:
-                print_lg(f'Found the word "master" in \n{jobDescription}')
-                found_masters = 2
             experience_required = extract_years_of_experience(jobDescription)
-            if current_experience > -1 and experience_required > current_experience + found_masters:
-                skipMessage = f'\n{jobDescription}\n\nExperience required {experience_required} > Current Experience {current_experience + found_masters}. Skipping this job!\n'
-                skipReason = "Required experience is high"
-                skip = True
+
+            if smart_experience_filter:
+                # --- Smart Experience Filter ---
+                # Signals that indicate the role is entry-level / requires no real experience
+                _entry_signals = [
+                    'no experience', 'fresher', 'fresh graduate', 'recent graduate',
+                    'new graduate', 'no prior experience', 'no work experience',
+                    'entry level', 'entry-level', 'junior level',
+                    '0-1 year', '0 to 1 year', '0-1 years', '0 to 1 years',
+                    '0 years', '0+ year',
+                ]
+                # Signals that the role explicitly values a master's / MTech degree
+                _masters_signals = [
+                    "master's degree", "masters degree", "master of",
+                    'mtech', 'm.tech', 'm. tech', 'master of technology',
+                    'master of science', 'ms degree', 'm.s.',
+                    'postgraduate', 'post graduate', 'post-graduate', 'pg degree',
+                    'master',  # broad catch — same as original did_masters logic
+                ]
+
+                _is_entry_level = (
+                    apply_to_freshers_directly and (
+                        experience_required == 0 or
+                        any(sig in jobDescriptionLow for sig in _entry_signals)
+                    )
+                )
+                _requires_masters = (
+                    did_masters and
+                    any(m in jobDescriptionLow for m in _masters_signals)
+                )
+
+                if _is_entry_level:
+                    print_lg(
+                        f'SmartFilter: Entry-level / no-experience role '
+                        f'(parsed exp: {experience_required} yr) — applying directly.'
+                    )
+                elif _requires_masters and experience_required <= max_experience_to_apply:
+                    print_lg(
+                        f'SmartFilter: Master\'s degree required with {experience_required} yr exp '
+                        f'(≤ {max_experience_to_apply}) — MTech qualifies, applying.'
+                    )
+                elif experience_required > max_experience_to_apply:
+                    skipReason = (
+                        f'Experience required ({experience_required} yr) '
+                        f'exceeds max allowed ({max_experience_to_apply} yr)'
+                    )
+                    skipMessage = (
+                        f'\n{jobDescription}\n\n{skipReason}. Skipping this job!\n'
+                    )
+                    skip = True
+                # else: experience_required <= max_experience_to_apply — apply normally
+
+            else:
+                # --- Original logic (used when smart_experience_filter = False) ---
+                if did_masters and 'master' in jobDescriptionLow:
+                    print_lg(f'Found the word "master" in \n{jobDescription}')
+                    found_masters = 2
+                if current_experience > -1 and experience_required > current_experience + found_masters:
+                    skipMessage = (
+                        f'\n{jobDescription}\n\nExperience required {experience_required} > '
+                        f'Current Experience {current_experience + found_masters}. Skipping this job!\n'
+                    )
+                    skipReason = "Required experience is high"
+                    skip = True
     except Exception as e:
         if jobDescription == "Unknown":    print_lg("Unable to extract job description!")
         else:
@@ -1000,6 +1066,41 @@ def apply_to_jobs(search_terms: list[str]) -> None:
                             skills = "Error extracting skills"
                         ##<
 
+                    # ---- Custom Resume Generation (per-job) ----
+                    global current_resume_path, current_selected_projects
+                    current_resume_path = default_resume_path
+                    current_selected_projects = []
+
+                    if enable_custom_resume and use_AI and aiClient and description != "Unknown":
+                        try:
+                            print_lg(f"CustomResume: Generating resume for '{title}' at '{company}'...")
+                            selected_names = select_projects_with_ai(
+                                job_title=title,
+                                job_description=description,
+                                projects_list=all_projects,
+                                ai_client=aiClient,
+                                ai_provider=ai_provider,
+                                n=num_projects_in_resume
+                            )
+                            if selected_names:
+                                custom_pdf = generate_custom_resume(
+                                    template_path=latex_template_path,
+                                    projects_list=all_projects,
+                                    selected_project_names=selected_names,
+                                    company_name=company,
+                                    job_title=title,
+                                    output_base_dir=generated_resume_path
+                                )
+                                if custom_pdf:
+                                    current_resume_path = custom_pdf
+                                    current_selected_projects = selected_names
+                                    print_lg(f"CustomResume: Using custom resume → {custom_pdf}")
+                                else:
+                                    print_lg("CustomResume: Falling back to default resume.")
+                        except Exception as e:
+                            print_lg(f"CustomResume: Error — {e}. Using default resume.")
+                    # ---- End Custom Resume Generation ----
+
                     uploaded = False
                     # Case 1: Easy Apply Button
                     # First try the classic button with "Easy" in aria-label
@@ -1065,7 +1166,7 @@ def apply_to_jobs(search_terms: list[str]) -> None:
                                         errored = "stuck"
                                         raise Exception("Seems like stuck in a continuous loop of next, probably because of new questions.")
                                     questions_list = answer_questions(modal, questions_list, work_location, job_description=description)
-                                    if useNewResume and not uploaded: uploaded, resume = upload_resume(modal, default_resume_path)
+                                    if useNewResume and not uploaded: uploaded, resume = upload_resume(modal, current_resume_path)
                                     try: next_button = modal.find_element(By.XPATH, './/span[normalize-space(.)="Review"]') 
                                     except NoSuchElementException:  next_button = modal.find_element(By.XPATH, './/button[contains(span, "Next")]')
                                     try: next_button.click()
@@ -1116,6 +1217,21 @@ def apply_to_jobs(search_terms: list[str]) -> None:
 
                     submitted_jobs(job_id, title, company, work_location, work_style, description, experience_required, skills, hr_name, hr_link, resume, reposted, date_listed, date_applied, job_link, application_link, questions_list, connect_request)
                     if uploaded:   useNewResume = False
+
+                    # ---- Log resume usage to Excel ----
+                    if enable_custom_resume:
+                        try:
+                            log_resume_application(
+                                company=company,
+                                job_title=title,
+                                resume_path=current_resume_path,
+                                selected_projects=current_selected_projects,
+                                job_description=description,
+                                log_path=resume_log_path
+                            )
+                        except Exception as _log_err:
+                            print_lg(f"ResumeLogger: Could not log — {_log_err}")
+                    # ---- End resume logging ----
 
                     print_lg(f'Successfully saved "{title} | {company}" job. Job ID: {job_id} info')
                     current_count += 1
