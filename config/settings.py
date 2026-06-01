@@ -58,7 +58,7 @@ generated_resume_path = "all resumes/" # (In Development)
 
 # Enable AI-powered per-job resume customization.
 # Requires use_AI = True in secrets.py and a valid LaTeX template below.
-enable_custom_resume = False            # True or False
+enable_custom_resume = True             # True or False
 
 # Path to your base LaTeX resume template (.tex).
 # The template MUST contain these two marker lines exactly as shown:
@@ -106,7 +106,7 @@ keep_screen_awake = True            # True or False, Note: True or False are cas
 stealth_mode = True                # True or False, Note: True or False are case-sensitive
 
 # Do you want to get alerts on errors related to AI API connection?
-showAiErrorAlerts = False            # True or False, Note: True or False are case-sensitive
+showAiErrorAlerts = True             # True or False, Note: True or False are case-sensitive
 
 # Use ChatGPT for resume building (Experimental Feature can break the application. Recommended to leave it as False) 
 # use_resume_generator = False       # True or False, Note: True or False are case-sensitive ,   This feature may only work with 'stealth_mode = True'. As ChatGPT website is hosted by CloudFlare which is protected by Anti-bot protections!

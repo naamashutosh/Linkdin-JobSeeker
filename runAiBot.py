@@ -559,7 +559,7 @@ def get_job_description(
 def upload_resume(modal: WebElement, resume: str) -> tuple[bool, str]:
     try:
         modal.find_element(By.NAME, "file").send_keys(os.path.abspath(resume))
-        return True, os.path.basename(default_resume_path)
+        return True, os.path.basename(resume)
     except: return False, "Previous resume"
 
 # Function to answer common questions for Easy Apply
