@@ -1,20 +1,13 @@
 '''
-Author:     Sai Vignesh Golla
-LinkedIn:   https://www.linkedin.com/in/saivigneshgolla/
 
-Copyright (C) 2024 Sai Vignesh Golla
 
 License:    GNU Affero General Public License
             https://www.gnu.org/licenses/agpl-3.0.en.html
             
-GitHub:     https://github.com/GodsScion/Auto_job_applier_linkedIn
 
-Support me: https://github.com/sponsors/GodsScion
 
 version:    26.01.20.5.08
 '''
-
-
 
 
 # from config.XdepricatedX import *
@@ -46,7 +39,6 @@ def check_list(var: list, var_name: str, options: list=[], min_length: int=0) ->
     return True
 
 
-
 from config.personals import *
 def validate_personals() -> None | ValueError | TypeError:
     '''
@@ -72,7 +64,6 @@ def validate_personals() -> None | ValueError | TypeError:
     check_string(gender, "gender", ["Male", "Female", "Other", "Decline", ""])
     check_string(disability_status, "disability_status", ["Yes", "No", "Decline"])
     check_string(veteran_status, "veteran_status", ["Yes", "No", "Decline"])
-
 
 
 from config.questions import *
@@ -164,8 +155,6 @@ def validate_settings() -> None | ValueError | TypeError:
     check_int(min_job_match_score, "min_job_match_score", 0)
 
 
-
-
 from config.secrets import *
 def validate_secrets() -> None | ValueError | TypeError:
     '''
@@ -195,7 +184,6 @@ def validate_secrets() -> None | ValueError | TypeError:
     ##<
 
     ##<
-
 
 
 from config.settings import *
@@ -230,8 +218,6 @@ def validate_settings() -> None | ValueError | TypeError:
     check_boolean(smooth_scroll, "smooth_scroll")
     check_boolean(keep_screen_awake, "keep_screen_awake")
     check_boolean(stealth_mode, "stealth_mode")
-
-
 
 
 def validate_config() -> bool | ValueError | TypeError:

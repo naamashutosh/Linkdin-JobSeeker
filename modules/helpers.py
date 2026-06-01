@@ -1,15 +1,10 @@
 '''
-Author:     Sai Vignesh Golla
-LinkedIn:   https://www.linkedin.com/in/saivigneshgolla/
 
-Copyright (C) 2024 Sai Vignesh Golla
 
 License:    GNU Affero General Public License
             https://www.gnu.org/licenses/agpl-3.0.en.html
             
-GitHub:     https://github.com/GodsScion/Auto_job_applier_linkedIn
 
-Support me: https://github.com/sponsors/GodsScion
 
 version:    26.01.20.5.08
 '''
@@ -29,7 +24,6 @@ from pyautogui import alert
 from pprint import pprint
 
 from config.settings import logs_folder_path
-
 
 
 #### Common functions ####
@@ -183,7 +177,6 @@ def manual_login_retry(is_logged_in: callable, limit: int = 2) -> None:
             message = 'If you\'re seeing this message even after you logged in, Click "{}". Seems like auto login confirmation failed!'.format(button)
         count += 1
         if alert(message, "Login Required", button) and count > limit: return
-
 
 
 def calculate_date_posted(time_string: str) -> datetime | None | ValueError:

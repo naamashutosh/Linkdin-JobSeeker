@@ -1,15 +1,10 @@
 '''
-Author:     Sai Vignesh Golla
-LinkedIn:   https://www.linkedin.com/in/saivigneshgolla/
 
-Copyright (C) 2024 Sai Vignesh Golla
 
 License:    GNU Affero General Public License
             https://www.gnu.org/licenses/agpl-3.0.en.html
             
-GitHub:     https://github.com/GodsScion/Auto_job_applier_linkedIn
 
-Support me: https://github.com/sponsors/GodsScion
 
 version:    26.01.20.5.08
 '''
@@ -113,7 +108,6 @@ def ai_close_openai_client(client: OpenAI) -> None:
             client.close()
     except Exception as e:
         ai_error_alert("Error occurred while closing OpenAI client.", e)
-
 
 
 # Function to get list of models available in OpenAI API
@@ -301,7 +295,6 @@ def ai_gen_experience(
     pass
 
 
-
 def ai_generate_resume(
     client: OpenAI, 
     job_description: str, about_company: str, required_skills: dict,
@@ -311,7 +304,6 @@ def ai_generate_resume(
     Function to generate resume. Takes in user experience and template info from config.
     '''
     pass
-
 
 
 def ai_generate_coverletter(
@@ -325,7 +317,6 @@ def ai_generate_coverletter(
     pass
 
 
-
 ##< Evaluation Agents
 def ai_evaluate_resume(
     client: OpenAI, 
@@ -336,7 +327,6 @@ def ai_evaluate_resume(
     pass
 
 
-
 def ai_evaluate_resume(
     client: OpenAI, 
     job_description: str, about_company: str, required_skills: dict,
@@ -344,7 +334,6 @@ def ai_evaluate_resume(
     stream: bool = stream_output
 ) -> dict | ValueError:
     pass
-
 
 
 def ai_check_job_relevance(

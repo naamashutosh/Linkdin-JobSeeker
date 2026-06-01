@@ -1,15 +1,10 @@
 '''
-Author:     Sai Vignesh Golla
-LinkedIn:   https://www.linkedin.com/in/saivigneshgolla/
 
-Copyright (C) 2024 Sai Vignesh Golla
 
 License:    GNU Affero General Public License
             https://www.gnu.org/licenses/agpl-3.0.en.html
             
-GitHub:     https://github.com/GodsScion/Auto_job_applier_linkedIn
 
-Support me: https://github.com/sponsors/GodsScion
 
 version:    26.01.20.5.08
 '''
@@ -33,15 +28,6 @@ YOU DON'T HAVE TO EDIT THIS FILE, IF YOU ADDED YOUR DEFAULT RESUME.
 # })
 
 
-
-
-
-
-
-
-
-
-
 # # >>>>>>>>>>> RELATED SETTINGS <<<<<<<<<<<
 
 # ## Allow Manual Inputs
@@ -63,24 +49,11 @@ YOU DON'T HAVE TO EDIT THIS FILE, IF YOU ADDED YOUR DEFAULT RESUME.
 # overwrite_previous_answers = False # True or False, Note: True or False are case-sensitive
 
 
-
-
-
-
-
 ############################################################################################################
 '''
-THANK YOU for using my tool 😊! Wishing you the best in your job hunt 🙌🏻!
 
-Sharing is caring! If you found this tool helpful, please share it with your peers 🥺. Your support keeps this project alive.
-
-Support my work on <PATREON_LINK>. Together, we can help more job seekers.
-
-As an independent developer, I pour my heart and soul into creating tools like this, driven by the genuine desire to make a positive impact.
 
 Your support, whether through donations big or small or simply spreading the word, means the world to me and helps keep this project alive and thriving.
 
-Gratefully yours 🙏🏻,
-Sai Vignesh Golla
 '''
 ############################################################################################################

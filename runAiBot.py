@@ -1,15 +1,10 @@
 '''
-Author:     Sai Vignesh Golla
-LinkedIn:   https://www.linkedin.com/in/saivigneshgolla/
 
-Copyright (C) 2024 Sai Vignesh Golla
 
 License:    GNU Affero General Public License
             https://www.gnu.org/licenses/agpl-3.0.en.html
             
-GitHub:     https://github.com/GodsScion/Auto_job_applier_linkedIn
 
-Support me: https://github.com/sponsors/GodsScion
 
 version:    26.01.20.5.08
 '''
@@ -222,7 +217,6 @@ def login_LN() -> None:
 #>
 
 
-
 def get_applied_job_ids() -> set[str]:
     '''
     Function to get a `set` of applied job's Job IDs
@@ -237,7 +231,6 @@ def get_applied_job_ids() -> set[str]:
     except FileNotFoundError:
         print_lg(f"The CSV file '{file_name}' does not exist.")
     return job_ids
-
 
 
 def set_search_location() -> None:
@@ -320,7 +313,6 @@ def apply_filters() -> None:
         # print_lg(e)
 
 
-
 def get_page_info() -> tuple[WebElement | None, int | None]:
     '''
     Function to get pagination element and current page number
@@ -335,7 +327,6 @@ def get_page_info() -> tuple[WebElement | None, int | None]:
         current_page = None
         print_lg(e)
     return pagination_element, current_page
-
 
 
 def get_job_main_details(job: WebElement, blacklisted_companies: set, rejected_jobs: set) -> tuple[str, str, str, str, str, bool]:
@@ -409,7 +400,6 @@ def check_blacklist(rejected_jobs: set, job_id: str, company: str, blacklisted_c
     buffer(click_gap)
     scroll_to_view(driver, jobs_top_card)
     return rejected_jobs, blacklisted_companies, jobs_top_card
-
 
 
 # Function to extract years of experience required from About Job
@@ -816,7 +806,6 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
                 elif 'website' in label or 'blog' in label or 'portfolio' in label or 'link' in label: answer = website
                 elif 'scale of 1-10' in label: answer = confidence_level
                 elif 'headline' in label: answer = linkedin_headline
-                elif ('hear' in label or 'come across' in label) and 'this' in label and ('job' in label or 'position' in label): answer = "https://github.com/GodsScion/Auto_job_applier_linkedIn"
                 elif 'state' in label or 'province' in label: answer = state
                 elif 'zip' in label or 'postal' in label or 'code' in label: answer = zipcode
                 elif 'country' in label: answer = country
@@ -932,8 +921,6 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
     return questions_list
 
 
-
-
 def external_apply(pagination_element: WebElement, job_id: str, job_link: str, resume: str, date_listed, application_link: str, screenshot_name: str) -> tuple[bool, str, int]:
     '''
     Function to open new tab and save external job application links
@@ -963,7 +950,6 @@ def external_apply(pagination_element: WebElement, job_id: str, job_link: str, r
         global failed_count
         failed_count += 1
         return True, application_link, tabs_count
-
 
 
 def follow_company(modal: WebDriver = driver) -> None:
@@ -1010,7 +996,6 @@ def screenshot(driver: WebDriver, job_id: str, failedAt: str) -> str:
 #>
 
 
-
 def submitted_jobs(job_id: str, title: str, company: str, work_location: str, work_style: str, description: str, experience_required: int | Literal['Unknown', 'Error in extraction'], 
                    skills: list[str] | Literal['In Development'], hr_name: str | Literal['Unknown'], hr_link: str | Literal['Unknown'], resume: str, 
                    reposted: bool, date_listed: datetime | Literal['Unknown'], date_applied:  datetime | Literal['Pending'], job_link: str, application_link: str, 
@@ -1034,15 +1019,10 @@ def submitted_jobs(job_id: str, title: str, company: str, work_location: str, wo
         pyautogui.alert("Failed to update the excel of applied jobs!\nProbably because of 1 of the following reasons:\n1. The file is currently open or in use by another program\n2. Permission denied to write to the file\n3. Failed to find the file", "Failed Logging")
 
 
-
 # Function to discard the job application
 def discard_job() -> None:
     actions.send_keys(Keys.ESCAPE).perform()
     wait_span_click(driver, 'Discard', 2)
-
-
-
-
 
 
 # Function to apply to jobs
@@ -1113,7 +1093,6 @@ def apply_to_jobs(search_terms: list[str]) -> None:
                     except Exception as e:
                         print_lg("Failed to scroll to About Company!")
                         # print_lg(e)
-
 
 
                     # Hiring Manager info
@@ -1408,7 +1387,6 @@ def apply_to_jobs(search_terms: list[str]) -> None:
                     applied_jobs.add(job_id)
 
 
-
                 # Switching to next page
                 if pagination_element == None:
                     print_lg("Couldn't find pagination element, probably at the end page of results!")
@@ -1451,12 +1429,10 @@ def run(total_runs: int) -> int:
     return total_runs + 1
 
 
-
 chatGPT_tab = False
 linkedIn_tab = False
 
 def main() -> None:
-    pyautogui.alert("Please consider sponsoring this project at:\n\nhttps://github.com/sponsors/GodsScion\n\n", "Support the project", "Okay")
     total_runs = 1
     try:
         global linkedIn_tab, tabs_count, useNewResume, aiClient
@@ -1537,10 +1513,6 @@ def main() -> None:
         print_lg("Irrelevant jobs skipped:        {}\n".format(skip_count))
         if randomly_answered_questions: print_lg("\n\nQuestions randomly answered:\n  {}  \n\n".format(";\n".join(str(question) for question in randomly_answered_questions)))
         quotes = choice([
-            "Never quit. You're one step closer than before. - Sai Vignesh Golla", 
-            "All the best with your future interviews, you've got this. - Sai Vignesh Golla", 
-            "Keep up with the progress. You got this. - Sai Vignesh Golla", 
-            "If you're tired, learn to take rest but never give up. - Sai Vignesh Golla",
             "Success is not final, failure is not fatal, It is the courage to continue that counts. - Winston Churchill (Not a sponsor)",
             "Believe in yourself and all that you are. Know that there is something inside you that is greater than any obstacle. - Christian D. Larson (Not a sponsor)",
             "Every job is a self-portrait of the person who does it. Autograph your work with excellence. - Jessica Guidobono (Not a sponsor)",
@@ -1550,13 +1522,11 @@ def main() -> None:
             "Obstacles are those frightful things you see when you take your eyes off your goal. - Henry Ford (Not a sponsor)",
             "The only limit to our realization of tomorrow will be our doubts of today. - Franklin D. Roosevelt (Not a sponsor)",
             ])
-        sponsors = "Be the first to have your name here!"
         timeSaved = (easy_applied_count * 80) + (external_jobs_count * 20) + (skip_count * 10)
         timeSavedMsg = ""
         if timeSaved > 0:
             timeSaved += 60
             timeSavedMsg = f"In this run, you saved approx {round(timeSaved/60)} mins ({timeSaved} secs), please consider supporting the project."
-        msg = f"{quotes}\n\n\n{timeSavedMsg}\nYou can also get your quote and name shown here, or prioritize your bug reports by supporting the project at:\n\nhttps://github.com/sponsors/GodsScion\n\n\nSummary:\n{summary}\n\n\nBest regards,\nSai Vignesh Golla\nhttps://www.linkedin.com/in/saivigneshgolla/\n\nTop Sponsors:\n{sponsors}"
         pyautogui.alert(msg, "Exiting..")
         print_lg(msg,"Closing the browser...")
         if tabs_count >= 10:

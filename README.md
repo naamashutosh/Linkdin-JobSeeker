@@ -1,479 +1,273 @@
-# LinkedIn AI Auto Job Applier 🤖
-This is an web scraping bot that automates the process of job applications on LinkedIn. It searches for jobs relevant to you, answers all questions in application form, customizes your resume based on the collected job information, such as skills required, description, about company, etc. and applies to the job. Can apply 100+ jobs in less than 1 hour. 
+# LinkedIn AI Auto Job Applier
+### Built by Ashutosh Verma — IIT Jammu
 
-
-## 📽️ See it in Action
-[![Auto Job Applier demo video](https://github.com/GodsScion/Auto_job_applier_linkedIn/assets/100998531/429f7753-ebb0-499b-bc5e-5b4ee28c4f69)](https://youtu.be/gMbB1fWZDHw)
-Click on above image to watch the demo or use this link https://youtu.be/gMbB1fWZDHw
-
-
-## ✨ Content
-- [Introduction](#linkedin-ai-auto-job-applier-)
-- [Demo Video](#%EF%B8%8F-see-it-in-action)
-- [Index](#-content)
-- [Install](#%EF%B8%8F-how-to-install)
-- [Configure](#-how-to-configure)
-- [New Features](#-new-features-added)
-  - [AI Custom Resume Generator](#1-ai-custom-resume-generator-per-job-latex-resume)
-  - [Smart Experience Filter](#2-smart-experience-filter-for-fresh-graduates--mtech-holders)
-- [Contributor Guidelines](#‍-contributor-guidelines)
-- [Updates](%EF%B8%8F-major-updates-history)
-- [Disclaimer](#-disclaimer)
-- [Terms and Conditions](#%EF%B8%8F-terms-and-conditions)
-- [License](#%EF%B8%8F-license)
-- [Socials](#-socials)
-- [Support and Discussions](#-community-support-and-discussions)
-
-<br>
-
-## ⚙️ How to install
-
-[![Auto Job Applier setup tutorial video](https://github.com/user-attachments/assets/9e876187-ed3e-4fbf-bd87-4acc145880a2)](https://youtu.be/f9rdz74e1lM?si=4fRBcte0nuvr6tEH)
-Click on above image to watch the tutorial for installation and configuration or use this link https://youtu.be/f9rdz74e1lM (Recommended to watch it in 2x speed)
-
-1. [Python 3.10](https://www.python.org/) or above. Visit https://www.python.org/downloads/ to download and install Python, or for windows you could visit Microsoft Store and search for "Python". **Please make sure Python is added to Path in System Environment Variables**.
-2. Install necessary [Undetected Chromedriver](https://pypi.org/project/undetected-chromedriver/), [PyAutoGUI](https://pypi.org/project/PyAutoGUI/) and [Setuptools](https://pypi.org/project/setuptools/) packages. After Python is installed, OPEN a console/terminal or shell, Use below command that uses the [pip](https://pip.pypa.io/en/stable) command-line tool to install these 3 package.
-  ```
-  pip install undetected-chromedriver pyautogui setuptools openai flask-cors flask
-  ```
-3. Download and install latest version of [Google Chrome](https://www.google.com/chrome) in it's default location, visit https://www.google.com/chrome to download it's installer.
-4. Clone the current git repo or download it as a zip file, url to the latest update https://github.com/GodsScion/Auto_job_applier_linkedIn.
-5. (Not needed if you set `stealth_mode = True` in `config/settings.py` ) Download and install the appropriate [Chrome Driver](https://googlechromelabs.github.io/chrome-for-testing/) for Google Chrome and paste it in the location Chrome was installed, visit https://googlechromelabs.github.io/chrome-for-testing/ to download.
-  <br> <br>
-  ***OR*** 
-  <br> <br>
-  If you are using Windows, click on `windows-setup.bat` available in the `/setup` folder, this will install the latest chromedriver automatically.
-6. If you have questions or need help setting it up or to talk in general, join the github server: https://discord.gg/fFp7uUzWCY
-
-[back to index](#-content)
-
-<br>
-
-## 🔧 How to configure
-1. Open `personals.py` file in `/config` folder and enter your details like name, phone number, address, etc. Whatever you want to fill in your applications.
-2. Open `questions.py` file in `/config` folder and enter your answers for application questions, configure wether you want the bot to pause before submission or pause if it can't answer unknown questions.
-3. Open `search.py` file in `/config` folder and enter your search preferences, job filters, configure the bot as per your needs (these settings decide which jobs to apply for or skip).
-4. Open `secrets.py` file in `/config` folder and enter your LinkedIn username, password to login and OpenAI API Key for generation of job tailored resumes and cover letters (This entire step is optional). If you do not provide username or password or leave them as default, it will login with saved profile in browser, if failed will ask you to login manually.
-5. Open `settings.py` file in `/config` folder to configure the bot settings like, keep screen awake, click intervals (click intervals are randomized to seem like human behavior), run in background, stealth mode (to avoid bot detection), etc. as per your needs.
-6. (Optional) Don't forget to add you default resume in the location you mentioned in `default_resume_path = "all resumes/default/resume.pdf"` given in `/config/questions.py`. If one is not provided, it will use your previous resume submitted in LinkedIn or (In Development) generate custom resume if OpenAI APT key is provided!
-7. Run `runAiBot.py` and see the magic happen.
-8. To run the Applied Jobs history UI, run `app.py` and open web browser on `http://localhost:5000`.
-8. If you have questions or need help setting it up or to talk in general, join the github server: https://discord.gg/fFp7uUzWCY
-
-[back to index](#-content)
-
-<br>
-
+An intelligent automation bot that applies to LinkedIn jobs with **AI-customized resumes** tailored per job description. Built on top of an open-source base with extensive modifications for AI-driven resume generation, smart filtering, and automated application tracking.
 
 ---
 
-## 🚀 New Features Added
+## Features
 
-> These features extend the original bot with AI-powered per-job resume customization and a smart experience filter designed for fresh graduates and MTech holders.
+### Core Automation
+- Searches LinkedIn for jobs matching your titles and location
+- Auto-fills Easy Apply forms (text fields, dropdowns, checkboxes, radio buttons)
+- Logs all applications to CSV with job details, company, HR info, date applied
+- Tracks failed applications separately for review
+
+### AI Resume Customization (per job)
+- Reads the job description using **Gemini AI**
+- Selects the **best 3–4 projects** from your master project list that match the job
+- Injects those projects into your **LaTeX resume template**
+- Compiles a **single-page PDF** named `Resume_<CompanyName>.pdf`
+- Saves each resume in `all resumes/<CompanyName>/`
+- Logs which resume + projects were used in `all excels/resume_log.xlsx`
+
+### Smart Filters (before applying)
+| Filter | Logic |
+|---|---|
+| **Skills-Match Filter** | Gemini scores resume vs job requirements (0–100). Skip if < 40. Apply even if LinkedIn profile says "missing qualifications" — match is based on actual skills/projects |
+| **Experience Filter** | Auto-applies to 0–1 yr / fresher / entry-level roles. Skips 2+ yr roles. MTech degree counts if master's is mentioned |
+| **Applicant Count Filter** | Flags < 50 applicants as HIGH PRIORITY. Skips ≥ 200 applicants |
+| **Recency Filter** | Prioritizes jobs posted in last 24 hours |
+| **Bad Words Filter** | Skips jobs with irrelevant keywords (SAP, PHP, 10+ years, etc.) |
+
+### Dynamic Salary
+Automatically answers salary questions based on job seniority:
+- Fresher / entry-level → ₹1,20,000
+- Standard roles → ₹1,52,000
+- Senior / research / 5G specialist → ₹2,20,000
+
+### Single-Page Resume Enforcement
+Compiles with N projects → checks pdflatex page count → drops last project if > 1 page → recompiles until exactly 1 page (minimum 2 projects).
 
 ---
 
-### 1. AI Custom Resume Generator (Per-Job LaTeX Resume)
+## Project Structure
 
-For every job application, the bot automatically:
-1. Reads the job description
-2. Uses your configured AI (OpenAI / DeepSeek / Gemini) to select the **best 3–4 projects** from your personal project list
-3. Injects those projects into your **LaTeX resume template**
-4. Compiles to a **PDF named after the company** and saves it in `all resumes/<CompanyName>/`
-5. Uploads that custom PDF to the LinkedIn Easy Apply form
-6. Logs the application to **`all excels/resume_log.xlsx`** (company, job title, resume path, selected projects, timestamp)
+```
+├── runAiBot.py                    # Main bot — entry point
+├── app.py                         # Flask dashboard (localhost:5000)
+├── config/
+│   ├── personals.py               # Your name, phone, address
+│   ├── questions.py               # Application answers, salary, cover letter
+│   ├── search.py                  # Job titles, location, filters
+│   ├── secrets.py                 # LinkedIn credentials + Gemini API key
+│   ├── settings.py                # Bot behavior settings
+│   └── projects.py                # Your 19 projects with LaTeX entries
+├── modules/
+│   ├── resume_customizer.py       # AI project selection + LaTeX compilation
+│   ├── resume_logger.py           # Excel log of resumes used per job
+│   ├── ai/
+│   │   ├── geminiConnections.py   # Gemini AI (project selection, job match, Q&A)
+│   │   ├── openaiConnections.py   # OpenAI / local LLM support
+│   │   └── prompts.py             # All AI prompts
+│   ├── clickers_and_finders.py    # Selenium element interaction
+│   ├── helpers.py                 # Utility functions
+│   ├── open_chrome.py             # Chrome session setup
+│   └── validator.py               # Config validation at startup
+├── all resumes/
+│   ├── template/
+│   │   └── resume_template.tex    # Your LaTeX resume template
+│   └── <CompanyName>/
+│       └── Resume_<CompanyName>.pdf  # Generated per job
+└── all excels/
+    ├── all_applied_applications_history.csv
+    ├── all_failed_applications_history.csv
+    └── resume_log.xlsx            # Which resume + projects used per job
+```
 
-#### Setup
+---
 
-**Step 1 — Add your projects** to `config/projects.py`.  
-Each entry needs these fields:
+## Setup
 
+### 1. Install Requirements
+
+```bash
+# Python 3.10+
+pip install undetected-chromedriver pyautogui setuptools openai flask-cors flask openpyxl requests google-genai
+
+# LaTeX (for PDF compilation)
+winget install MiKTeX.MiKTeX     # Windows
+```
+
+### 2. Configure Your Details
+
+**`config/personals.py`** — name, phone, address
+
+**`config/secrets.py`**
+```python
+username  = "your_linkedin_email@gmail.com"
+password  = "your_linkedin_password"
+use_AI    = True
+ai_provider = "gemini"
+llm_api_key = "YOUR_GEMINI_API_KEY"   # Get free key: https://aistudio.google.com/app/apikey
+llm_model   = "gemini-flash-lite-latest"
+```
+
+**`config/questions.py`** — years of experience, salary, cover letter, LinkedIn/GitHub URLs
+
+**`config/search.py`** — job titles to search, location, experience level, filters
+
+### 3. Add Your Projects
+
+Open `config/projects.py` and add your projects. Each entry:
 ```python
 {
-    "name": "Your Project Name",
-    "description": "One or two sentences about what this project does (used by AI for matching).",
-    "domains": ["Machine Learning", "Computer Vision"],   # domain tags
-    "tech_stack": ["Python", "PyTorch", "OpenCV"],
-    "latex_entry": r"""
-        \resumeProjectHeading
-          {\textbf{Your Project Name} $|$ \emph{Python, PyTorch}}{2024}
-          \resumeItemListStart
-            \resumeItem{What you built and the result}
-            \resumeItem{Key technical achievement}
-          \resumeItemListEnd"""
+    "name": "Your Project Title",
+    "description": "2-3 sentence plain-English description for AI matching",
+    "domains": ["Machine Learning", "Signal Processing"],
+    "tech_stack": ["Python", "PyTorch", "MATLAB"],
+    "date_range": "2025-01",
+    "latex_entry": r"""\resumeSubItem{Your Project Title (Tags) \hfill {\normalsize Date}}{
+    Description paragraph for resume.
+    }"""
 }
 ```
 
-**Step 2 — Prepare your LaTeX template** at `all resumes/template/resume_template.tex`.  
-A sample template is already provided. Open it and replace the placeholder sections with your real details.  
-The **only mandatory requirement** is that your projects section contains these two marker lines exactly:
+### 4. Set Up Your Resume Template
+
+Place your LaTeX resume at `all resumes/template/resume_template.tex`.
+
+**Required markers** in your projects section:
 ```latex
 %%PROJECTS_START%%
+... default projects here ...
 %%PROJECTS_END%%
 ```
-The bot replaces everything between them for each job.
 
-**Step 3 — Install LaTeX** (required to compile `.tex` → `.pdf`):
-```
-winget install MiKTeX.MiKTeX
-```
-> If pdflatex is not found, the bot automatically tries an online compilation fallback (latexonline.cc).
+The bot replaces everything between these markers for each job.
 
-**Step 4 — Install the Excel logger:**
-```
-pip install openpyxl
-```
+### 5. Place Your Default Resume
 
-**Step 5 — Enable in `config/settings.py`:**
-```python
-enable_custom_resume    = True
-latex_template_path     = "all resumes/template/resume_template.tex"
-num_projects_in_resume  = 4       # 3 or 4 recommended
-resume_log_path         = "all excels/resume_log.xlsx"
+Copy your resume PDF to:
+```
+all resumes/default/resume.pdf
+```
+Used as fallback if AI resume generation fails.
+
+### 6. Run
+
+```bash
+python runAiBot.py
 ```
 
-**Step 6 — Ensure AI is enabled** in `config/secrets.py`:
-```python
-use_AI = True
-```
+Chrome opens automatically. Since `safe_mode = False`, it uses your real Chrome profile — **no manual login needed** if you're already signed into LinkedIn in Chrome.
 
-#### What Gets Saved
-
-```
-all resumes/
-└── Google/
-    ├── Google_ML_Engineer_resume.tex    ← editable source
-    └── Google_ML_Engineer_resume.pdf    ← uploaded to LinkedIn
-
-all excels/
-└── resume_log.xlsx     ← Date | Company | Job Title | Resume Path | Projects Used
+**View application history:**
+```bash
+python app.py
+# Open http://localhost:5000
 ```
 
 ---
 
-### 2. Smart Experience Filter (for Fresh Graduates / MTech Holders)
+## Configuration Reference
 
-The bot now applies a nuanced experience-level check before deciding to apply.
-
-#### Decision Logic
-
-```
-Job description received
-        │
-        ▼
-Contains "fresher" / "no experience" / "entry level" /
-"0-1 years" / "recent graduate"  OR  parsed experience == 0?
-        │ YES ──► ✅  Apply directly (no further checks)
-        │
-        ▼
-"master" / "mtech" / "postgraduate" mentioned
-AND experience required ≤ max_experience_to_apply (1 yr)?
-        │ YES ──► ✅  Apply  (MTech / Master's degree qualifies)
-        │
-        ▼
-Experience required > max_experience_to_apply?
-        │ YES ──► ❌  Skip (too senior for this profile)
-        │ NO  ──► ✅  Apply
-```
-
-#### Settings in `config/search.py`
+### `config/settings.py`
 
 | Setting | Default | Description |
 |---|---|---|
-| `smart_experience_filter` | `True` | Enable the new logic (`False` reverts to original `current_experience` check) |
-| `max_experience_to_apply` | `1` | Skip jobs requiring more than N years of experience |
-| `apply_to_freshers_directly` | `True` | Always apply to fresher / entry-level / 0-experience roles |
+| `enable_custom_resume` | `True` | Generate AI-customized resume per job |
+| `latex_template_path` | `all resumes/template/resume_template.tex` | Path to LaTeX template |
+| `num_projects_in_resume` | `4` | Projects to select per resume |
+| `enable_job_match_filter` | `True` | Skip jobs where skills score < threshold |
+| `min_job_match_score` | `40` | Minimum Gemini match score to apply |
+| `max_desired_salary` | `220000` | Upper salary for senior roles |
+| `safe_mode` | `False` | False = use real Chrome profile (stay logged in) |
+| `stealth_mode` | `True` | Bypass LinkedIn bot detection |
+| `pause_before_submit` | `True` | Pause for review before each submit |
+| `run_in_background` | `False` | Hide Chrome window |
 
-> **For a fresh MTech graduate:** Keep all three defaults. You do **not** need to change `current_experience` — it is bypassed when `smart_experience_filter = True`.
+### `config/search.py`
 
-#### Examples
-
-| Job Description Says | Parsed Exp | Action |
+| Setting | Default | Description |
 |---|---|---|
-| "Fresher / no experience required" | 0 | ✅ Apply directly |
-| "0–1 years experience" | 0 | ✅ Apply directly |
-| "Master's degree required, 1 yr exp" | 1 | ✅ Apply (MTech qualifies) |
-| "2+ years experience required" | 2 | ❌ Skip |
-| "3–5 years, Senior Engineer" | 3 | ❌ Skip |
-| "5+ years experience" | 5 | ❌ Skip |
+| `search_terms` | 18 ML/RF/DSP/Embedded titles | Job titles to search |
+| `search_location` | `"India"` | Search location |
+| `experience_level` | `["Internship", "Entry level", "Associate"]` | LinkedIn filter |
+| `smart_experience_filter` | `True` | Skip 2+ yr jobs, always apply to freshers |
+| `max_experience_to_apply` | `1` | Max years experience to apply |
+| `prefer_recent_24h_jobs` | `True` | Sort by most recent, past 24h |
+| `skip_if_applicants_exceed` | `200` | Skip if ≥ 200 applicants |
+| `priority_if_applicants_below` | `50` | Flag as HIGH PRIORITY if < 50 applicants |
+
+### `config/questions.py`
+
+| Setting | Value | Description |
+|---|---|---|
+| `years_of_experience` | `"1"` | For experience questions in forms |
+| `current_ctc` | `100000` | Current salary (TA stipend) |
+| `desired_salary` | `120000` | Minimum expected salary |
+| `notice_period` | `0` | Immediate availability |
+| `require_visa` | `"No"` | For India roles |
 
 ---
 
-[back to index](#-content)
+## How Resume Customization Works
 
-<br>
-
-## 🧑‍💻 Contributor Guidelines
-Thank you for your efforts and being a part of the community. All contributions are appreciated no matter how small or big. Once you contribute to the code base, your work will be remembered forever.
-
-NOTE: Only Pull request to `community-version` branch will be accepted. Any other requests will be declined by default, especially to main branch.
-Once your code is tested, your changes will be merged to the `main` branch in next cycle.
-
-### Code Guidelines
-  #### Functions:
-  1. All functions or methods are named lower case and snake case
-  2. Must have explanation of their purpose. Write explanation surrounded in `''' Explanation '''` under the definition `def function() -> None:`. Example:
-      ```python
-      def function() -> None:
-        '''
-        This function does nothing, it's just an example for explanation placement!
-        '''
-      ```
-  4. The Types `(str, list, int, list[str], int | float)` for the parameters and returns must be given. Example:
-      ```python
-      def function(param1: str, param2: list[str], param3: int) -> str:
-      ```
-  5. Putting all that together some valid examples for function or method declarations would be as follows.
-      ```python
-      def function_name_in_camel_case(parameter1: driver, parameter2: str) -> list[str] | ValueError:
-        '''
-        This function is an example for code guidelines
-        '''
-        return [parameter2, parameter2.lower()]
-      ```
-  6. The hashtag comments on top of functions are optional, which are intended for developers `# Comments for developers`.
-      ```python
-      # Enter input text function
-      def text_input_by_ID(driver: WebDriver, id: str, value: str, time: float=5.0) -> None | Exception:
-          '''
-          Enters `value` into the input field with the given `id` if found, else throws NotFoundException.
-          - `time` is the max time to wait for the element to be found.
-          '''
-          username_field = WebDriverWait(driver, time).until(EC.presence_of_element_located((By.ID, id)))
-          username_field.send_keys(Keys.CONTROL + "a")
-          username_field.send_keys(value)
-      
-      ```
-   
-  #### Variables
-  1. All variables must start with lower case, must be in explainable full words. If someone reads the variable name, it should be easy to understand what the variable stores.
-  2. All local variables are camel case. Examples:
-      ```python
-      jobListingsElement = None
-      ```
-      ```python
-      localBufferTime = 5.5
-      ```
-  3. All global variables are snake case. Example:
-      ```
-      total_runs = 1
-      ```
-  4. Mentioning types are optional.
-      ```python
-      localBufferTime: float | int = 5.5
-      ```
-  
-  #### Configuration variables
-  1. All config variables are treated as global variables. They have some extra guidelines.
-  2. Must have variable setting explanation, and examples of valid values. Examples:
-      ```python
-      # Explanation of what this setting will do, and instructions to enter it correctly
-      config_variable = "value1"    #  <Valid values examples, and NOTES> "value1", "value2", etc. Don't forget quotes ("")
-      ```
-      ```python
-      # Do you want to randomize the search order for search_terms?
-      randomize_search_order = False     # True of False, Note: True or False are case-sensitive
-      ```
-      ```python
-      # Avoid applying to jobs if their required experience is above your current_experience. (Set value as -1 if you want to apply to all ignoring their required experience...)
-      current_experience = 5             # Integers > -2 (Ex: -1, 0, 1, 2, 3, 4...)
-      ```
-      ```python
-      # Search location, this will be filled in "City, state, or zip code" search box. If left empty as "", tool will not fill it.
-      search_location = "United States"               # Some valid examples: "", "United States", "India", "Chicago, Illinois, United States", "90001, Los Angeles, California, United States", "Bengaluru, Karnataka, India", etc.
-
-      ```
-  4. Add the config variable in appropriate `/config/file`.
-  5. Every config variable must be validated. Go to `/modules/validator.py` and add it over there. Example:
-      For config variable `search_location = ""` found in `/config/search.py`, string validation is added in file `/modules/validator.py` under the method `def validate_search()`.
-      ```python
-      def validate_search() -> None | ValueError | TypeError:
-          '''
-          Validates all variables in the `/config/search.py` file.
-          '''
-          check_string(search_location, "search_location")
-      ```
-
-  [back to index](#-content)
-  
-  ### Attestation
-  1. All contributions require proper attestion. Format for attestation:
-  ```python
-  ##> ------ <Your full name> : <github id> OR <email> - <Type of change> ------
-      print("My contributions 😍") # Your code
-  ##<
-  ```
-  2. Examples for proper attestation:
-  New feature example
-  ```python
-  ##> ------ Sai Vignesh Golla : godsscion - Feature ------
-  def alert_box(title: str, message: str) -> None:
-    '''
-    Shows an alert box with the given `title` and `message`.
-    '''
-    from pyautogui import alert
-    return alert(title, message)
-
-  ##<
-  ```
-  
-  Bug fix example
-  ```python
-  def alert_box(title: str, message: str) -> None:
-    '''
-    Shows an alert box with the given `title` and `message`.
-    '''
-    from pyautogui import alert
-
-  ##> ------ Sai Vignesh Golla : saivigneshgolla@outlook.com - Bug fix ------
-    return alert(message, title)
-  ##<
-  ```
-
-[back to index](#-content)
-
-## 🗓️ Major Updates History:
-
-### June 1, 2026
-- **AI Custom Resume Generator**: Bot now auto-selects 3–4 best-matching projects from a user-defined project list (`config/projects.py`) for each job using AI, injects them into a LaTeX template, compiles to PDF, and uploads the custom resume
-- **Per-company resume folders**: Each generated resume is saved in `all resumes/<CompanyName>/` with the company and job title in the filename
-- **Resume application log**: Every application is logged to `all excels/resume_log.xlsx` (date, company, job title, resume path, projects used)
-- **Smart Experience Filter**: New nuanced experience-level filter for fresh graduates and MTech holders — automatically applies to 0–1 year / no-experience / entry-level jobs and skips 2+ year roles; MTech degree is recognized as a qualifier when master's degree is mentioned
-- New config settings: `enable_custom_resume`, `latex_template_path`, `num_projects_in_resume`, `resume_log_path` in `settings.py`; `smart_experience_filter`, `max_experience_to_apply`, `apply_to_freshers_directly` in `search.py`
-- New modules: `modules/resume_customizer.py`, `modules/resume_logger.py`
-- Added `ai_select_projects()` to `modules/ai/openaiConnections.py`
-- Sample LaTeX resume template provided at `all resumes/template/resume_template.tex`
-
-### Jan 20, 2026
-- You can now simultaneously use chrome, while bot continues applying in a new window
-
-### Jul 20, 2024
-- Contributions from community have been added
-- Better AI support, minor bug fixes
-
-### Nov 28, 2024
-- Patched to work for latest changes in Linkedin.
-- Users can now select to follow or not follow companies when submitting application.
-- Frameworks for future AI Developments have been added.
-- AI can now be used to extract skills from job description. 
-
-### Oct 16, 2024
-- Framework for OpenAI API and Local LLMs
-- Framework for RAG
-
-### Sep 09, 2024
-- Smarter Auto-fill for salaries and notice periods
-- Robust Search location filter, will work in window mode (No need for full screen)
-- Better logic for Select and Radio type questions
-- Proper functioning of Decline to answer questions in Equal Employment opportunity questions
-- Checkbox questions select fail bug fixed
-- Annotations are clearer in instructions for setup
-
-### Sep 07, 2024
-- Annotations for developers
-- Robust input validations
-- Restructured config file
-- Fixed pagination bug
-
-### Aug 21, 2024
-- Performance improvements (skip clicking on applied jobs and blacklisted companies)
-- Stop when easy apply application limit is reached
-- Added ability to discard from pause at submission dialogue box
-- Added support for address input
-- Bug fixed radio questions, added support for physical disability questions
-- Added framework for future config file updates
-
-### June 19, 2024
-- Major Bug fixes (Text Area type questions)
-- Made uploading default resume as not required
-
-### May 15, 2024
-- Added functionality for textarea type questions `summary`, `cover_letter`(Summary, Cover letter); checkbox type questions (acknowledgements)
-- Added feature to skip irrelevant jobs based on `bad_words` 
-- Improved performance for answering questions
-- Logic change for masters students skipping
-- Change variable names `blacklist_exceptions` -> `about_company_good_words` and `blacklist_words` -> `about_company_bad_words`
-- Added session summary for logs
-- Added option to turn off "Pause before Submit" until next run
-
-### May 05, 2024
-- For questions similar to "What is your current location?", City posted in Job description will be posted as the answer if `current_city` is left empty in the configuration
-- Added option to over write previously saved answers for a question `overwrite_previous_answers`
-- Tool will now save previous answer of a question
-- Tool will now collect all available options for a Radio type or Select type question
-- Major update in answering logic for Easy Apply Application questions
-- Added Safe mode option for quick stable launches `safe_mode`
-
-### May 04, 2024
-- Added option to fill in "City, state, or zip code" search box `search_location`
-- Bug fixes in answering City or location question
-
-
-[back to index](#-content)
-
-<br>
-
-## 📜 Disclaimer
-
-**This program is for educational purposes only. By downloading, using, copying, replicating, or interacting with this program or its code, you acknowledge and agree to abide by all the Terms, Conditions, Policies, and Licenses mentioned, which are subject to modification without prior notice. The responsibility of staying informed of any changes or updates bears upon yourself. For the latest Terms & Conditions, Licenses, or Policies, please refer to [Auto Job Applier](https://github.com/GodsScion/Auto_job_applier_linkedIn). Additionally, kindly adhere to and comply with LinkedIn's terms of service and policies pertaining to web scraping. Usage is at your own risk. The creators and contributors of this program emphasize that they bear no responsibility or liability for any misuse, damages, or legal consequences resulting from its usage.**
-
-
-## 🏛️ Terms and Conditions
-
-Please consider the following:
-
-- **LinkedIn Policies**: LinkedIn has specific policies regarding web scraping and data collection. The responsibility to review and comply with these policies before engaging, interacting, or undertaking any actions with this program bears upon yourself. Be aware of the limitations and restrictions imposed by LinkedIn to avoid any potential violation(s).
-
-- **No Warranties or Guarantees**: This program is provided as-is, without any warranties or guarantees of any kind. The accuracy, reliability, and effectiveness of the program cannot be guaranteed. Use it at your own risk.
-
-- **Disclaimer of Liability**: The creators and contributors of this program shall not be held responsible or liable for any damages or consequences arising from the direct or indirect use, interaction, or actions performed with this program. This includes but is not limited to any legal issues, loss of data, or other damages incurred.
-
-- **Use at Your Own Risk**: It is important to exercise caution and ensure that your usage, interactions, and actions with this program comply with the applicable laws and regulations. Understand the potential risks and consequences associated with web scraping and data collection activities.
-
-- **Chrome Driver**: This program utilizes the Chrome Driver for web scraping. Please review and comply with the terms and conditions specified for [Chrome Driver](https://chromedriver.chromium.org/home).
-
-
-## ⚖️ License
-
-Copyright (C) 2024 Sai Vignesh Golla  <saivigneshgolla@outlook.com>
-
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
-
-See [AGPLv3 LICENSE](LICENSE) for more info.
-
-
-<br>
-
-[back to index](#-content)
-
-<br>
-
-## 🐧 Socials
-- **LinkedIn** : https://www.linkedin.com/in/saivigneshgolla/
-- **Email**    : saivigneshgolla@outlook.com
-- **X/Twitter**: https://x.com/saivigneshgolla
-- **Discord**  : godsscion
-
-
-## 🙌 Community Support and Discussions
-- **Discord Server** : https://discord.gg/fFp7uUzWCY
-alternate link: https://discord.gg/ykfDjRFB
-- **GitHub**
-    - [All Discussions](https://github.com/GodsScion/Auto_job_applier_linkedIn/discussions)
-    - [Announcements](https://github.com/GodsScion/Auto_job_applier_linkedIn/discussions/categories/announcements)
-    - [General](https://github.com/GodsScion/Auto_job_applier_linkedIn/discussions/categories/general)
-    - [Feature requests or Ideas](https://github.com/GodsScion/Auto_job_applier_linkedIn/discussions/categories/feature-requests-or-ideas)
-    - [Polls](https://github.com/GodsScion/Auto_job_applier_linkedIn/discussions/categories/polls)
-    - [Community Flex](https://github.com/GodsScion/Auto_job_applier_linkedIn/discussions/categories/community-flex)
-    - [Support Q&A](https://github.com/GodsScion/Auto_job_applier_linkedIn/discussions/categories/support-q-a)
-
-
-#### ℹ️ Version: 26.01.20.5.08
+```
+Job found on LinkedIn
+        │
+        ▼
+Gemini scores skills match (0-100)
+        │
+   Score < 40 → Skip (irrelevant role)
+   Score ≥ 40 → Continue
+        │
+        ▼
+Gemini reads job description
+Selects best 3–4 projects from your 19
+        │
+        ▼
+Injects projects into resume_template.tex
+Compiles → checks page count
+If > 1 page → drops last project → recompile
+        │
+        ▼
+Saves: all resumes/<Company>/Resume_<Company>.pdf
+Logs:  all excels/resume_log.xlsx
+        │
+        ▼
+Uploads Resume_<Company>.pdf to Easy Apply
+```
 
 ---
 
-[back to the top](#linkedin-ai-auto-job-applier-)
+## Adding Your Own Projects
+
+1. Open `config/projects.py`
+2. Copy the template entry at the bottom
+3. Fill in all fields including the `latex_entry`
+4. The `latex_entry` must use `\resumeSubItem{Title \hfill Date}{Description}` format
+5. Set `date_range` as `"YYYY-MM"` (start date)
+
+---
+
+## Application Tracking
+
+After each run:
+- **`all excels/all_applied_applications_history.csv`** — every job applied with full details
+- **`all excels/resume_log.xlsx`** — which `Resume_<Company>.pdf` was used + which projects
+- **`all excels/all_failed_applications_history.csv`** — skipped/failed jobs with reasons
+- **`logs/`** — full console logs per run
+
+When you get an interview call, open `resume_log.xlsx`, find the company, and open the exact resume you submitted.
+
+---
+
+## License
+
+This project builds on open-source code licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+
+New features added by Ashutosh Verma (IIT Jammu):
+- AI Custom Resume Generator (`modules/resume_customizer.py`, `modules/resume_logger.py`)
+- Gemini AI integration (`modules/ai/geminiConnections.py`)
+- Smart Experience Filter, Applicant Count Filter, Skills-Match Filter
+- Dynamic Salary system
+- LaTeX single-page enforcement
+- Complete `config/projects.py` project management system
+
+Original base: [Auto Job Applier LinkedIn](https://github.com/GodsScion/Auto_job_applier_linkedIn) — AGPL-3.0
+
+---
+
+*Built with ❤️ by Ashutosh Verma | M.Tech, IIT Jammu | Signal Processing & AI/ML*
