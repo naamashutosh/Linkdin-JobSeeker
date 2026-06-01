@@ -1,36 +1,30 @@
 from google import genai
 from google.genai import types
 from config.secrets import llm_model, llm_api_key
-from config.settings import showAiErrorAlerts
 from modules.helpers import print_lg, critical_error_log, convert_to_json
 from modules.ai.prompts import *
-from pyautogui import confirm
 from typing import Literal
+
+# Module-level flag — avoids scope error when set inside functions
+_show_ai_alerts = True
 
 
 def gemini_create_client():
-    """
-    Creates and returns a Gemini client using the new google.genai SDK.
-    """
+    """Creates and returns a Gemini client using the google.genai SDK."""
     try:
         print_lg("Configuring Gemini client...")
         if not llm_api_key or llm_api_key in ("not-needed", "YOUR_GEMINI_API_KEY_HERE"):
-            raise ValueError("Gemini API key is not set. Please set it in config/secrets.py.")
+            raise ValueError("Gemini API key not set. Please set it in config/secrets.py.")
 
         client = genai.Client(api_key=llm_api_key)
-
         print_lg("---- SUCCESSFULLY CONFIGURED GEMINI CLIENT! ----")
         print_lg(f"Using Model: {llm_model}")
-        print_lg("Check './config/secrets.py' for more details.")
         print_lg("---------------------------------------------")
         return client
 
     except Exception as e:
         error_message = "Error configuring Gemini client. Check your API key and model name."
         critical_error_log(error_message, e)
-        if showAiErrorAlerts:
-            if "Pause AI error alerts" == confirm(f"{error_message}\n{str(e)}", "Gemini Connection Error", ["Pause AI error alerts", "Okay Continue"]):
-                showAiErrorAlerts = False
         return None
 
 
@@ -61,14 +55,15 @@ def gemini_completion(client, prompt: str, is_json: bool = False):
         return result
     except Exception as e:
         critical_error_log("Error in Gemini completion!", e)
-        return {"error": str(e)}
+        return ""
 
 
 def gemini_extract_skills(client, job_description: str):
     """Extracts skills from a job description using Gemini."""
     try:
         print_lg("Extracting skills from job description using Gemini...")
-        prompt = extract_skills_prompt.format(job_description) + "\n\nImportant: Respond with only the JSON object, no markdown."
+        prompt = extract_skills_prompt.format(job_description) + \
+                 "\n\nImportant: Respond with only the JSON object, no markdown."
         return gemini_completion(client, prompt, is_json=True)
     except Exception as e:
         critical_error_log("Error extracting skills with Gemini!", e)
@@ -86,7 +81,7 @@ def gemini_answer_question(
 ) -> str:
     """Answers an application question using Gemini."""
     try:
-        print_lg(f"Answering question using Gemini: {question}")
+        print_lg(f"Answering question using Gemini: {question[:80]}")
         user_info = user_information_all or ""
         prompt = ai_answer_prompt.format(user_info, question)
 
@@ -106,4 +101,27 @@ def gemini_answer_question(
         return gemini_completion(client, prompt)
     except Exception as e:
         critical_error_log("Error answering question with Gemini!", e)
-        return {"error": str(e)}
+        return ""
+
+
+def gemini_check_job_match(client, job_title: str, job_description: str, candidate_profile: str) -> int:
+    """
+    Rates how well the candidate's resume/skills match the job requirements.
+    Returns integer 0-100. Returns 50 on error (neutral — don't skip).
+    """
+    import re
+    try:
+        from modules.ai.prompts import job_match_prompt
+        prompt = job_match_prompt.format(
+            candidate_profile=candidate_profile[:2000],
+            job_title=job_title,
+            job_description=job_description[:2500]
+        )
+        raw = gemini_completion(client, prompt)
+        nums = re.findall(r'\d+', str(raw))
+        score = min(100, max(0, int(nums[0]))) if nums else 50
+        print_lg(f"Gemini job match score: {score}/100")
+        return score
+    except Exception as e:
+        critical_error_log("Error in Gemini job match check!", e)
+        return 50

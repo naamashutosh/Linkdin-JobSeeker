@@ -57,7 +57,7 @@ if enable_custom_resume:
     from modules.resume_logger import log_resume_application
 
 if enable_job_match_filter and use_AI:
-    from modules.ai.openaiConnections import ai_check_job_match
+    from modules.ai.geminiConnections import gemini_check_job_match
 
 from typing import Literal
 
@@ -1192,23 +1192,19 @@ def apply_to_jobs(search_terms: list[str]) -> None:
                     # ---- Skills-Match Filter ----
                     if enable_job_match_filter and use_AI and aiClient and description != "Unknown":
                         try:
-                            from modules.ai.prompts import job_match_prompt
-                            _match_prompt = job_match_prompt.format(
-                                candidate_profile=user_information_all[:2000],
-                                job_title=title,
-                                job_description=description[:2500]
-                            )
                             if ai_provider.lower() == "gemini":
-                                _raw_score = gemini_answer_question(aiClient, _match_prompt)
-                            elif ai_provider.lower() == "deepseek":
-                                _raw_score = deepseek_answer_question(aiClient, _match_prompt)
+                                match_score = gemini_check_job_match(aiClient, title, description, user_information_all)
                             else:
-                                _raw_score = ai_answer_question(aiClient, _match_prompt)
-                            _nums = re.findall(r'\d+', str(_raw_score))
-                            match_score = min(100, max(0, int(_nums[0]))) if _nums else 50
+                                # For OpenAI/DeepSeek: use a simple prompt via answer_question
+                                from modules.ai.prompts import job_match_prompt
+                                _mp = job_match_prompt.format(candidate_profile=user_information_all[:2000], job_title=title, job_description=description[:2500])
+                                _raw = ai_answer_question(aiClient, _mp) if ai_provider.lower() == "openai" else deepseek_answer_question(aiClient, _mp)
+                                _nums = re.findall(r'\d+', str(_raw))
+                                match_score = min(100, max(0, int(_nums[0]))) if _nums else 50
+
                             print_lg(f'SkillsMatch: Score {match_score}/100 (threshold: {min_job_match_score})')
                             if match_score < min_job_match_score:
-                                _reason  = f"Low skills-match score ({match_score}/100 < {min_job_match_score})"
+                                _reason  = f"Low skills-match ({match_score}/100 < {min_job_match_score})"
                                 _message = f'\nJob: "{title}" at "{company}"\n\n{_reason}. Skipping!\n'
                                 print_lg(_message)
                                 failed_job(job_id, job_link, resume, date_listed, _reason, _message, "Skipped", screenshot_name)
