@@ -1381,14 +1381,6 @@ def main() -> None:
         alert_title = "Error Occurred. Closing Browser!"
         validate_config()
 
-        # ---- Recency Priority: override sort/date settings when prefer_recent_24h_jobs is True ----
-        if prefer_recent_24h_jobs:
-            global date_posted, sort_by
-            date_posted = "Past 24 hours"
-            sort_by = "Most recent"
-            print_lg("RecencyFilter: prefer_recent_24h_jobs = True → date_posted='Past 24 hours', sort_by='Most recent'")
-        # ---- End Recency Priority ----
-
         if not os.path.exists(default_resume_path):
             pyautogui.alert(text='Your default resume "{}" is missing! Please update it\'s folder path "default_resume_path" in config.py\n\nOR\n\nAdd a resume with exact name and path (check for spelling mistakes including cases).\n\n\nFor now the bot will continue using your previous upload from LinkedIn!'.format(default_resume_path), title="Missing Resume", button="OK")
             useNewResume = False

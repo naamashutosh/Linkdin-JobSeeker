@@ -67,8 +67,10 @@ This is below format: QUESTION = VALID_ANSWER
 
 '''
 
-sort_by = ""                       # "Most recent", "Most relevant" or ("" to not select) 
-date_posted = "Past week"         # "Any time", "Past month", "Past week", "Past 24 hours" or ("" to not select)
+prefer_recent_24h_jobs = True      # True or False — when True, forces "Past 24 hours" + "Most recent"
+
+sort_by = "Most recent" if prefer_recent_24h_jobs else ""
+date_posted = "Past 24 hours" if prefer_recent_24h_jobs else "Past week"
 salary = ""                        # "$40,000+", "$60,000+", "$80,000+", "$100,000+", "$120,000+", "$140,000+", "$160,000+", "$180,000+", "$200,000+"
 
 easy_apply_only = True             # True or False, Note: True or False are case-sensitive
@@ -92,11 +94,7 @@ fair_chance_employer = False       # True or False, Note: True or False are case
 
 
 # >>>>>>>>>>> Recency Priority <<<<<<<<<<<
-
-# When True, forces date_posted = "Past 24 hours" and sort_by = "Most recent" at startup.
-# This ensures the bot always sees the freshest jobs first and ignores older listings.
-# Overrides whatever date_posted and sort_by are set to above.
-prefer_recent_24h_jobs = True      # True or False
+# prefer_recent_24h_jobs is defined above near sort_by and date_posted
 
 
 # >>>>>>>>>>> Applicant Count Priority Filter <<<<<<<<<<<
