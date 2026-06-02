@@ -108,21 +108,40 @@ def select_projects_with_ai(
         raw = _call_ai(ai_client, ai_provider, prompt)
         print_lg(f"CustomResume: AI raw response (first 200 chars): {raw[:200]}")
 
+        valid_names = {p["name"] for p in projects_list}
+
+        # Extract the JSON array from the response (handles markdown/extra text)
         match = re.search(r'\[.*?\]', raw, re.DOTALL)
         if match:
-            selected = json.loads(match.group())
-            valid_names = {p["name"] for p in projects_list}
+            parsed = json.loads(match.group())
+
+            # Handle both formats:
+            #   Simple:  ["Project Name 1", "Project Name 2"]
+            #   Verbose: [{"name": "Project Name 1", ...}, ...]
+            if parsed and isinstance(parsed[0], dict):
+                selected = [item.get("name", "") for item in parsed]
+            else:
+                selected = [str(item) for item in parsed]
+
             selected = [name for name in selected if name in valid_names]
             if selected:
                 print_lg(f"CustomResume: AI selected → {selected}")
                 return selected[:n]
 
-        print_lg(f"CustomResume: Could not parse AI response as project list.")
+        # Fallback: scan response for any valid project name mentioned
+        found = [name for name in valid_names if name in raw]
+        if found:
+            print_lg(f"CustomResume: Extracted from text → {found[:n]}")
+            return found[:n]
+
+        print_lg("CustomResume: Could not parse AI project selection — using fallback.")
     except Exception as e:
         print_lg(f"CustomResume: AI project selection error — {e}")
 
-    fallback = [p["name"] for p in projects_list[:n]]
-    print_lg(f"CustomResume: Using fallback projects → {fallback}")
+    # Smart keyword-based fallback — scores each project against the job description
+    print_lg("CustomResume: Using keyword-based scoring to select projects...")
+    fallback = _keyword_select_projects(job_title, job_description, projects_list, n)
+    print_lg(f"CustomResume: Keyword-selected projects → {fallback}")
     return fallback
 
 
@@ -226,11 +245,63 @@ def generate_custom_resume(
 #  Internal helpers                                                            #
 # --------------------------------------------------------------------------- #
 
+def _keyword_select_projects(job_title: str, job_description: str, projects_list: list, n: int) -> list:
+    '''
+    Scores every project against the job title + description using keyword overlap.
+    Returns names of the top N projects by score.
+    Used as a reliable fallback when AI response cannot be parsed.
+    '''
+    job_text = (job_title + " " + job_description).lower()
+
+    # Extract meaningful tokens (3+ chars, ignore common words)
+    _stop = {'the','and','for','are','you','with','this','that','have','from','will',
+             'our','your','not','but','can','all','any','its','been','has','was','was',
+             'per','via','etc','also','into','more','each','some','such','both','they'}
+
+    job_tokens = set(
+        w for w in re.findall(r'[a-z]{3,}', job_text)
+        if w not in _stop
+    )
+
+    scores = []
+    for project in projects_list:
+        score = 0
+        # Score against domains (weight 3)
+        for domain in project.get("domains", []):
+            domain_tokens = set(re.findall(r'[a-z]{3,}', domain.lower()))
+            score += len(job_tokens & domain_tokens) * 3
+
+        # Score against tech stack (weight 2)
+        for tech in project.get("tech_stack", []):
+            tech_tokens = set(re.findall(r'[a-z]{3,}', tech.lower()))
+            score += len(job_tokens & tech_tokens) * 2
+
+        # Score against description (weight 1)
+        desc_tokens = set(re.findall(r'[a-z]{3,}', project.get("description", "").lower()))
+        score += len(job_tokens & desc_tokens)
+
+        # Bonus: recent projects (date_range closer to today)
+        date_range = project.get("date_range", "2020-01")
+        try:
+            year = int(date_range[:4])
+            score += max(0, (year - 2020))  # +1 per year after 2020
+        except Exception:
+            pass
+
+        scores.append((score, project["name"]))
+
+    scores.sort(key=lambda x: -x[0])
+    return [name for _, name in scores[:n]]
+
+
 def _inject_projects(template_tex: str, projects: list) -> str:
     block = "\n".join(p.get("latex_entry", "").strip() for p in projects)
+    replacement = f'%%PROJECTS_START%%\n{block}\n%%PROJECTS_END%%'
+    # Use a lambda so re.sub does NOT interpret backslashes in the LaTeX block
+    # (e.g. \hfill, \textbf would be misread as regex escape sequences otherwise)
     return re.sub(
         r'%%PROJECTS_START%%.*?%%PROJECTS_END%%',
-        f'%%PROJECTS_START%%\n{block}\n%%PROJECTS_END%%',
+        lambda _: replacement,
         template_tex,
         flags=re.DOTALL
     )
@@ -296,8 +367,13 @@ def _compile_once(tex_path: str, output_dir: str) -> tuple:
 
 
 def _parse_page_count(stdout: str) -> int:
-    match = re.search(r'Output written on .+?\((\d+) page', stdout)
-    return int(match.group(1)) if match else 1
+    # pdflatex wraps long paths across lines — join first, then search
+    # Pattern: "(2 pages, 12345 bytes)" or "(1 page, 12345 bytes)"
+    joined = stdout.replace('\n', ' ').replace('\r', ' ')
+    match = re.search(r'\((\d+) page', joined)
+    if match:
+        return int(match.group(1))
+    return 1
 
 
 def _log_latex_errors(stdout: str) -> None:
