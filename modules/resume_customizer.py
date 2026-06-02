@@ -155,13 +155,16 @@ def generate_custom_resume(
     selected_project_names: list,
     company_name: str,
     job_title: str,
-    output_base_dir: str = "all resumes"
+    output_base_dir: str = "all resumes",
+    job_description: str = "",
+    conditional_certifications: list = None
 ) -> Optional[str]:
     '''
     Builds a custom resume PDF:
       1. Injects selected projects into the LaTeX template.
-      2. Compiles and checks page count.
-      3. Drops last project and recompiles if > 1 page (min 2 projects).
+      2. Injects any conditional certifications whose domains match the job.
+      3. Compiles and checks page count.
+      4. Drops last project and recompiles if > 1 page (min _MIN_PROJECTS).
 
     PDF saved as: <output_base_dir>/<CompanyName>/Resume_<CompanyName>.pdf
     Returns absolute PDF path, or None on failure.
@@ -177,6 +180,14 @@ def generate_custom_resume(
         if "%%PROJECTS_START%%" not in template_tex or "%%PROJECTS_END%%" not in template_tex:
             print_lg("CustomResume: Template missing %%PROJECTS_START%% / %%PROJECTS_END%% markers.")
             return None
+
+        # --- Inject conditional certifications ---
+        template_tex = _inject_conditional_certs(
+            template_tex,
+            conditional_certifications or [],
+            job_title,
+            job_description
+        )
 
         project_map = {p["name"]: p for p in projects_list}
         ordered = [project_map[n] for n in selected_project_names if n in project_map]
@@ -292,6 +303,47 @@ def _keyword_select_projects(job_title: str, job_description: str, projects_list
 
     scores.sort(key=lambda x: -x[0])
     return [name for _, name in scores[:n]]
+
+
+def _inject_conditional_certs(
+    template_tex: str,
+    conditional_certifications: list,
+    job_title: str,
+    job_description: str
+) -> str:
+    '''
+    Checks each conditional certification against the job text.
+    If ≥ min_keyword_matches domain keywords are found, appends the
+    certification's latex_entry to the certifications section.
+
+    Replaces %%CERTIFICATIONS_START%%...%%CERTIFICATIONS_END%% in the template.
+    If no conditional certs qualify, the markers are simply removed.
+    '''
+    job_text = (job_title + " " + job_description).lower()
+    matched_latex = []
+
+    for cert in conditional_certifications:
+        domains = [d.lower() for d in cert.get("domains", [])]
+        threshold = cert.get("min_keyword_matches", 1)
+        matches = sum(1 for d in domains if d in job_text)
+        if matches >= threshold:
+            matched_latex.append(cert.get("latex_entry", ""))
+            print_lg(
+                f"CertFilter: '{cert['name']}' MATCHED ({matches} keyword(s)) "
+                f"— adding to certifications."
+            )
+        else:
+            print_lg(
+                f"CertFilter: '{cert['name']}' not relevant to this job — skipping."
+            )
+
+    extra = "".join(matched_latex)
+    return re.sub(
+        r'%%CERTIFICATIONS_START%%.*?%%CERTIFICATIONS_END%%',
+        lambda _: f'%%CERTIFICATIONS_START%%{extra}%%CERTIFICATIONS_END%%',
+        template_tex,
+        flags=re.DOTALL
+    )
 
 
 def _inject_projects(template_tex: str, projects: list) -> str:

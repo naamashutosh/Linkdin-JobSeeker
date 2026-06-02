@@ -11,7 +11,7 @@ os.environ["PATH"] = os.environ.get("PATH", "") + ";" + miktex
 
 print("pdflatex:", shutil.which("pdflatex"))
 
-from config.projects import projects_list
+from config.projects import projects_list, conditional_certifications
 from modules.resume_customizer import generate_custom_resume, _keyword_select_projects
 
 jobs = [
@@ -21,9 +21,9 @@ jobs = [
         "Demo_ML_Company"
     ),
     (
-        "NLP Engineer",
-        "BERT DistilBERT text classification ONNX FastAPI HuggingFace Python transformers NLP sentiment analysis",
-        "Demo_NLP_Company"
+        "Prompt Engineer",
+        "prompt engineering ChatGPT GPT-4 LLM generative AI instruction tuning RAG OpenAI NLP language model AI product",
+        "Demo_Prompt_Company"
     ),
     (
         "5G Wireless Systems Engineer",
@@ -48,7 +48,9 @@ for job_title, job_desc, company in jobs:
         selected_project_names=selected,
         company_name=company,
         job_title=job_title,
-        output_base_dir="all resumes"
+        output_base_dir="all resumes",
+        job_description=job_desc,
+        conditional_certifications=conditional_certifications
     )
     if pdf:
         print(f"  PDF: {pdf}")

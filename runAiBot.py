@@ -48,7 +48,7 @@ if use_AI:
     from modules.ai.ollamaConnections import ollama_create_client, ollama_extract_skills, ollama_answer_question, ollama_check_job_match, ollama_select_projects
 
 if enable_custom_resume:
-    from config.projects import projects_list as all_projects
+    from config.projects import projects_list as all_projects, conditional_certifications as all_certs
     from modules.resume_customizer import generate_custom_resume, select_projects_with_ai
     from modules.resume_logger import log_resume_application
 
@@ -1270,7 +1270,9 @@ def apply_to_jobs(search_terms: list[str]) -> None:
                                     selected_project_names=selected_names,
                                     company_name=company,
                                     job_title=title,
-                                    output_base_dir=generated_resume_path
+                                    output_base_dir=generated_resume_path,
+                                    job_description=description,
+                                    conditional_certifications=all_certs
                                 )
                                 if custom_pdf:
                                     current_resume_path = custom_pdf

@@ -224,3 +224,43 @@ Produced and mixed 100+ rap/vocal tracks in FL Studio applying EQ, compression, 
 # Description — 1-2 sentences with measurable results and tech keywords.
 # }"""
 # -----------------------------------------------------------------------
+
+
+# =======================================================================
+# CONDITIONAL CERTIFICATIONS
+# Each entry is injected into the resume's Certifications section ONLY
+# when the job description matches the specified domains/keywords.
+# The bot checks relevance using keyword overlap before adding the cert.
+# =======================================================================
+
+conditional_certifications = [
+
+    {
+        "name": "Prompt Engineering for ChatGPT",
+        "issuer": "Vanderbilt University (Coursera)",
+        "domains": [
+            "Prompt Engineering", "Generative AI", "LLM", "Large Language Model",
+            "ChatGPT", "GPT", "OpenAI", "NLP", "Conversational AI",
+            "AI Engineer", "Applied AI", "Language Model", "Foundation Model",
+            "Instruction Tuning", "RAG", "Retrieval Augmented Generation",
+            "AI Product", "AI Application"
+        ],
+        # Minimum number of domain keywords that must appear in the job text
+        # for this cert to be included
+        "min_keyword_matches": 1,
+        # LaTeX to append after the existing certifications line
+        "latex_entry": r" \hspace{1.5em} Prompt Engineering for ChatGPT --- Vanderbilt University, Coursera"
+    },
+
+]
+
+# -----------------------------------------------------------------------
+# TO ADD A NEW CONDITIONAL CERTIFICATION:
+# {
+#     "name": "Cert Name",
+#     "issuer": "Issuer Name",
+#     "domains": ["keyword1", "keyword2", ...],  # job text must contain ≥1
+#     "min_keyword_matches": 1,
+#     "latex_entry": r" \hspace{1.5em} Cert Name --- Issuer, Platform"
+# }
+# -----------------------------------------------------------------------
