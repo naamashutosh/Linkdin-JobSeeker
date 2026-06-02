@@ -15,24 +15,55 @@ version:    26.01.20.5.08
 # These Sentences are Searched in LinkedIn
 # Enter your search terms inside '[ ]' with quotes ' "searching title" ' for each search followed by comma ', ' Eg: ["Software Engineer", "Software Developer", "Selenium Developer"]
 search_terms = [
+    # --- AI / ML / Generative AI ---
     "Machine Learning Engineer",
     "AI Engineer",
     "Deep Learning Engineer",
-    "Signal Processing Engineer",
-    "Research Engineer",
+    "Prompt Engineer",
+    "Generative AI Engineer",
+    "Applied AI Engineer",
     "ML Research Engineer",
+    "Research Scientist",
+    "Research Engineer",
+
+    # --- Signal Processing / Audio / Speech ---
+    "Signal Processing Engineer",
+    "DSP Engineer",
+    "Audio ML Engineer",
+    "Speech Recognition Engineer",
+    "Audio AI Engineer",
+
+    # --- Computer Vision / NLP ---
     "Computer Vision Engineer",
     "NLP Engineer",
+
+    # --- Data Science ---
     "Data Scientist",
-    "Embedded ML Engineer",
+    "Data Analyst",
+
+    # --- Wireless / RF / 5G ---
     "RF Engineer",
     "Wireless Systems Engineer",
     "5G Engineer",
-    "DSP Engineer",
-    "Audio ML Engineer",
+    "Communication Systems Engineer",
+    "Telecom Engineer",
+
+    # --- Embedded / ECE / EE / CS ---
+    "Embedded ML Engineer",
+    "Embedded Systems Engineer",
+    "Embedded Software Engineer",
+    "Firmware Engineer",
+    "Electronics Engineer",
+    "VLSI Design Engineer",
+    "Hardware Engineer",
+    "IoT Engineer",
+    "FPGA Engineer",
+
+    # --- Entry level / Fresher ---
     "Junior Machine Learning Engineer",
     "Graduate Engineer Trainee",
-    "Research Scientist",
+    "Software Engineer",
+    "Associate Engineer",
 ]
 
 # Search location

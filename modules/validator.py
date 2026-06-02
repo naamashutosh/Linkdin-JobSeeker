@@ -62,6 +62,7 @@ def validate_personals() -> None | ValueError | TypeError:
     
     check_string(ethnicity, "ethnicity", ["Decline", "Hispanic/Latino", "American Indian or Alaska Native", "Asian", "Black or African American", "Native Hawaiian or Other Pacific Islander", "White", "Other"],  min_length=0)
     check_string(gender, "gender", ["Male", "Female", "Other", "Decline", ""])
+    check_string(sexual_orientation, "sexual_orientation", ["Straight", "Gay or Lesbian", "Bisexual", "Decline", "Other", ""])
     check_string(disability_status, "disability_status", ["Yes", "No", "Decline"])
     check_string(veteran_status, "veteran_status", ["Yes", "No", "Decline"])
 
@@ -174,7 +175,7 @@ def validate_secrets() -> None | ValueError | TypeError:
     
     ##> ------ Yang Li : MARKYangL - Feature ------
     # Validate DeepSeek configuration
-    check_string(ai_provider, "ai_provider", ["openai", "deepseek", "gemini"])
+    check_string(ai_provider, "ai_provider", ["openai", "deepseek", "gemini", "ollama"])
 
     ##> ------ Tim L : tulxoro - Refactor ------
     if ai_provider == "deepseek":

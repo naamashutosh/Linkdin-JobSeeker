@@ -637,14 +637,29 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
             prev_answer = selected_option
             if overwrite_previous_answers or selected_option == "Select an option":
                 ##> ------ WINDY_WINDWARD Email:karthik.sarode23@gmail.com - Added fuzzy logic to answer location based questions ------
-                if 'email' in label or 'phone' in label: 
+                if 'email' in label or 'phone' in label:
                     answer = prev_answer
-                elif 'gender' in label or 'sex' in label: 
+                elif 'gender' in label or 'sex' in label:
                     answer = gender
-                elif 'disability' in label: 
+                elif 'sexual orientation' in label or 'sexual identity' in label or 'orientation' in label:
+                    answer = sexual_orientation
+                elif 'disability' in label:
                     answer = disability_status
-                elif 'proficiency' in label: 
+                elif 'proficiency' in label:
                     answer = 'Professional'
+                # Degree / education level in dropdown
+                elif any(w in label for w in ['degree', 'education', 'qualification', 'highest']):
+                    # Try to match Master's variant from available options
+                    _master_variants = ["Master's", "Masters", "Master", "M.Tech", "MTech",
+                                        "Post Graduate", "Postgraduate", "PG", "M.S.", "MS"]
+                    answer = "Master's"
+                    for _mv in _master_variants:
+                        if any(_mv.lower() in opt.lower() for opt in optionsText):
+                            answer = next(opt for opt in optionsText if _mv.lower() in opt.lower())
+                            break
+                # School / university in dropdown
+                elif any(w in label for w in ['university', 'college', 'school', 'institution']):
+                    answer = "Indian Institute Of Technology Jammu"
                 # Add location handling
                 elif any(loc_word in label for loc_word in ['location', 'city', 'state', 'country']):
                     if 'country' in label:
@@ -720,6 +735,7 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
             if overwrite_previous_answers or prev_answer is None:
                 if 'citizenship' in label or 'employment eligibility' in label: answer = us_citizenship
                 elif 'veteran' in label or 'protected' in label: answer = veteran_status
+                elif 'sexual orientation' in label or 'orientation' in label: answer = sexual_orientation
                 elif 'disability' in label or 'handicapped' in label: 
                     answer = disability_status
                 else: answer = answer_common_questions(label,answer)
@@ -807,6 +823,19 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
                 elif 'state' in label or 'province' in label: answer = state
                 elif 'zip' in label or 'postal' in label or 'code' in label: answer = zipcode
                 elif 'country' in label: answer = country
+                # ---- Skill rating: 0-10 → 8, 0-5 → 4 ----
+                elif any(w in label for w in ['rate', 'rating', 'proficiency', 'skill level', 'expertise', 'how would you rate', 'score yourself']):
+                    _nums = re.findall(r'\d+', label)
+                    _max = max(int(n) for n in _nums) if _nums else 10
+                    answer = "8" if _max >= 8 else ("4" if _max >= 4 else str(max(1, _max - 1)))
+                    print_lg(f'Rating question (0-{_max}) → {answer}')
+                # ---- School / University ----
+                elif any(w in label for w in ['university', 'college', 'school', 'institution', 'institute', 'alma mater']):
+                    answer = "Indian Institute Of Technology Jammu"
+                    do_actions = True
+                # ---- Degree / Education ----
+                elif any(w in label for w in ['degree', 'qualification', 'highest education', 'highest degree', 'education level']):
+                    answer = "Master's"
                 else: answer = answer_common_questions(label,answer)
                 ##> ------ Yang Li : MARKYangL - Feature ------
                 if answer == "":
