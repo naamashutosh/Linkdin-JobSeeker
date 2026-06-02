@@ -35,7 +35,7 @@ except ImportError:
 from modules.helpers import print_lg
 
 
-_MIN_PROJECTS = 2
+_MIN_PROJECTS = 4
 
 
 # --------------------------------------------------------------------------- #
