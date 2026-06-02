@@ -31,14 +31,19 @@ def createChromeSession(isRetry: bool = False):
     if disable_extensions:  options.add_argument("--disable-extensions")
 
     print_lg("IF YOU HAVE MORE THAN 10 TABS OPENED, PLEASE CLOSE OR BOOKMARK THEM! Or it's highly likely that application will just open browser and not do anything!")
-    profile_dir = find_default_profile_directory()
+
+    # Dedicated bot profile — separate from your regular Chrome, avoids locking conflicts.
+    # LinkedIn login is saved here after first manual login. Never conflicts with Chrome.
+    import pathlib, os
+    bot_profile = str(pathlib.Path.home() / "AppData" / "Local" / "ChromeLinkedInBot")
+    pathlib.Path(bot_profile).mkdir(parents=True, exist_ok=True)
+
     if isRetry:
-        print_lg("Will login with a guest profile, browsing history will not be saved in the browser!")
-    elif profile_dir and not safe_mode:
-        options.add_argument(f"--user-data-dir={profile_dir}")
-    else:
-        print_lg("Logging in with a guest profile, Web history will not be saved!")
+        print_lg("Retrying with a clean temp profile...")
         options.add_argument(f"--user-data-dir={get_default_temp_profile()}")
+    else:
+        print_lg(f"Using dedicated bot Chrome profile: {bot_profile}")
+        options.add_argument(f"--user-data-dir={bot_profile}")
     if stealth_mode:
         # try: 
         #     driver = uc.Chrome(driver_executable_path="C:\\Program Files\\Google\\Chrome\\chromedriver-win64\\chromedriver.exe", options=options)
@@ -59,7 +64,7 @@ except SessionNotCreatedException as e:
     critical_error_log("Failed to create Chrome Session, retrying with guest profile", e)
     options, driver, actions, wait = createChromeSession(True)
 except Exception as e:
-    if isinstance(e,TimeoutError): msg = "Couldn't download Chrome-driver. Set stealth_mode = False in config!"
+    msg = "Couldn't download Chrome-driver. Set stealth_mode = False in config!" if isinstance(e, TimeoutError) else f"Chrome failed to open: {e}\n\nTry: Set safe_mode = True in settings.py"
     print_lg(msg)
     critical_error_log("In Opening Chrome", e)
     from pyautogui import alert

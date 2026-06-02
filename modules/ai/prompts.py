@@ -134,24 +134,23 @@ Use: job_match_prompt.format(candidate_profile=..., job_title=..., job_descripti
 
 ##> Custom Resume — Project Selection
 select_projects_prompt = """
-You are a resume customization expert. Select the {n} most relevant projects from the list below
-that best match the given job description.
+You are a resume customization expert. Select the {n} most relevant projects from the list below.
 
 Job Title: {job_title}
 
 Job Description:
 {job_description}
 
-Available Projects (JSON):
+Available Projects:
 {projects_json}
 
-Rules:
-1. Rank by: (a) tech stack overlap, (b) domain/role relevance, (c) impact and complexity.
-2. Select EXACTLY {n} projects.
-3. Use the EXACT "name" strings from the JSON above.
-4. Return ONLY a valid JSON array — no explanation, no markdown, no extra text.
+IMPORTANT INSTRUCTIONS:
+1. Select EXACTLY {n} project names that best match the job requirements.
+2. Use the EXACT "name" strings from the list above — copy them character for character.
+3. Your ENTIRE response must be ONLY a JSON array of strings. Nothing else.
+4. NO explanations, NO markdown, NO extra text before or after the array.
 
-Example output format:
+Your response must look EXACTLY like this (with real project names):
 ["Project Name 1", "Project Name 2", "Project Name 3", "Project Name 4"]
 """
 """

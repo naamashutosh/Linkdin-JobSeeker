@@ -15,5 +15,7 @@ old
 
 secrets.py
 config/personals.py
+config/questions.py
+config/secrets.py
 .venv
 apikeys.py
