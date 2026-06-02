@@ -2,9 +2,9 @@
 %% The PROJECTS section between the two marker comments is replaced per job by the bot.
 %% All other sections remain fixed on every generated resume.
 
-\documentclass[8.5pt, letterpaper]{article}
+\documentclass[9.5pt, letterpaper]{article}
 
-\usepackage[top=0.25in, bottom=0.22in, left=0.42in, right=0.42in]{geometry}
+\usepackage[top=0.28in, bottom=0.25in, left=0.44in, right=0.44in]{geometry}
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -15,25 +15,25 @@
 
 \hypersetup{colorlinks=true, urlcolor=black, linkcolor=black}
 
-\titleformat{\section}{\normalfont\small\bfseries}{}{0em}{}[\titlerule]
-\titlespacing*{\section}{0pt}{9pt}{4pt}
+\titleformat{\section}{\normalfont\bfseries}{}{0em}{}[\titlerule]
+\titlespacing*{\section}{0pt}{10pt}{5pt}
 
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
 \sloppy
 
-\setlist[itemize]{leftmargin=1.1em, itemsep=1pt, parsep=0pt, topsep=2pt, partopsep=0pt}
-\setlist[enumerate]{leftmargin=2em, itemsep=1pt, parsep=0pt, topsep=2pt, partopsep=0pt}
+\setlist[itemize]{leftmargin=1.3em, itemsep=2pt, parsep=0pt, topsep=3pt, partopsep=0pt}
+\setlist[enumerate]{leftmargin=2em, itemsep=2pt, parsep=0pt, topsep=3pt, partopsep=0pt}
 
 %% Project entry: bullet + bold title + right-aligned date + description paragraph
 %% ATS-friendly: plain text, no tables, standard bullet, clean paragraph flow
 \newcommand{\resumeSubItem}[2]{%
+  \vspace{4pt}%
+  \noindent$\bullet$\enskip\textbf{#1}\par%
+  \vspace{1pt}%
+  \noindent\hspace{0.9em}{#2}\par%
   \vspace{3pt}%
-  \noindent\small$\bullet$\enskip\textbf{#1}\par%
-  \vspace{0pt}%
-  \noindent\hspace{0.85em}{\small #2}\par%
-  \vspace{2pt}%
 }
 
 \begin{document}
@@ -52,21 +52,19 @@
 %% ---------- EDUCATION ----------
 \section{Education}
 \textbf{Indian Institute of Technology (IIT) Jammu} \hfill \textit{Jammu, India}\\
-{\small M.Tech --- Signal Processing and Communication Engineering (SPCOM); CGPA: 8.16 \hfill \textit{2024 -- Present}}\\[3pt]
+M.Tech --- Signal Processing and Communication Engineering (SPCOM); CGPA: 8.16 \hfill \textit{2024 -- Present}\\[4pt]
 \textbf{Galgotias College of Engineering and Technology} \hfill \textit{Greater Noida, India}\\
-{\small B.Tech --- Electronics and Communication Engineering; CGPA: 8.07 \hfill \textit{2017 -- 2021}}
+B.Tech --- Electronics and Communication Engineering; CGPA: 8.07 \hfill \textit{2017 -- 2021}
 
 %% ---------- SKILLS ----------
 \section{Skills Summary}
-{\small
-\textbf{Languages:} Python, MATLAB, C/C++, SQL \hspace{0.4em}
-\textbf{ML \& DL:} PyTorch, TensorFlow, CNNs, Transformers, Wav2Vec2, BERT, Whisper, Vision Transformers, Scikit-Learn\\[0.5pt]
-\textbf{Signal Processing:} STFT, MFCC, PSD, WST-1D/2D, FIR/IIR Design, FFT, Spectrograms, Feature Engineering\\[0.5pt]
-\textbf{Wireless \& RF:} Modulation Classification, RadioML, SDR Concepts, SNR Estimation, Cognitive Radio\\[0.5pt]
-\textbf{Embedded Systems:} Embedded C, TI TMDSLCDK6748, UART Debugging, Cycle-Accurate Profiling, PyTorch C++\\[0.5pt]
-\textbf{Tools:} Git, Linux, Jupyter, Docker, ONNX Runtime, MATLAB Simulink, CCS \hspace{0.4em}
+\textbf{Languages:} Python, MATLAB, C/C++, SQL \hspace{0.5em}
+\textbf{ML \& DL:} PyTorch, TensorFlow, CNNs, Transformers, Wav2Vec2, BERT, Whisper, Vision Transformers, Scikit-Learn\\[2pt]
+\textbf{Signal Processing:} STFT, MFCC, PSD, WST-1D/2D, FIR/IIR Design, FFT, Spectrograms, Feature Engineering\\[2pt]
+\textbf{Wireless \& RF:} Modulation Classification, RadioML, SDR Concepts, SNR Estimation, Cognitive Radio\\[2pt]
+\textbf{Embedded Systems:} Embedded C, TI TMDSLCDK6748, UART Debugging, Cycle-Accurate Profiling, PyTorch C++\\[2pt]
+\textbf{Tools:} Git, Linux, Jupyter, Docker, ONNX Runtime, MATLAB Simulink, CCS \hspace{0.5em}
 \textbf{Domains:} ML, Deep Learning, Audio ML, Speech Processing, Computer Vision, Wireless Communication, RF Signal Processing
-}
 
 %% ---------- PROJECTS — bot fills this section per job ----------
 \section{Projects}
@@ -75,24 +73,22 @@
 
 %% ---------- WORK EXPERIENCE ----------
 \section{Work Experience}
-{\small\textbf{Teaching Assistant --- Digital Signal Processing Lab} \hfill \textit{IIT Jammu, Aug 2024 -- Present}}
+\textbf{Teaching Assistant --- Digital Signal Processing Lab} \hfill \textit{IIT Jammu, Aug 2024 -- Present}
 \begin{itemize}
-  \item {\small Guided 40+ students in ML-integrated signal analysis (FFT, FIR/IIR design, feature extraction); conducted labs on PyTorch model development, interpretability, and production-ready inference pipelines.}
+  \item Guided 40+ students in ML-integrated signal analysis (FFT, FIR/IIR design, feature extraction); conducted labs on PyTorch model development, interpretability, and production-ready inference pipelines.
 \end{itemize}
 
 %% ---------- PUBLICATIONS ----------
 \section{Publications (Accepted)}
-{\small
 \begin{enumerate}[label={[\arabic*]}, leftmargin=2em]
   \item A. Verma, R. Buragohain, K. Nathwani, P. Kalsotra: ``Exploiting Wavelet Scattering and Spectral Features in Tri-Modal Cross-Attention for Oral Cancer Detection,'' Accepted --- IEEE EMBC 2026.
   \item A. Verma, R. Buragohain, K. Nathwani, P. Kalsotra: ``Speech-Driven Early Oral Cancer Screening Using Adaptive VMD and Multi-Modal Attention Network,'' Accepted --- NCC 2026, India.
 \end{enumerate}
-}
 
 %% ---------- CERTIFICATIONS ----------
 \section{Certifications}
-{\small Machine Learning Specialization --- Andrew Ng, Coursera \hspace{1em}
-Qualcomm 5G Introductory Level Certification --- Qualcomm \hspace{1em}
-Crash Course on Python --- Google, Coursera}
+Machine Learning Specialization --- Andrew Ng, Coursera \hspace{1.5em}
+Qualcomm 5G Introductory Level Certification --- Qualcomm \hspace{1.5em}
+Crash Course on Python --- Google, Coursera
 
 \end{document}
