@@ -26,13 +26,14 @@
 \setlist[itemize]{leftmargin=1.1em, itemsep=0pt, parsep=0pt, topsep=0pt, partopsep=0pt}
 \setlist[enumerate]{leftmargin=2em, itemsep=0pt, parsep=0pt, topsep=0pt, partopsep=0pt}
 
-%% Project entry command: bullet + bold title with right-aligned date + one-line description
+%% Project entry: bullet + bold title + right-aligned date + description paragraph
+%% ATS-friendly: plain text, no tables, standard bullet, clean paragraph flow
 \newcommand{\resumeSubItem}[2]{%
-  \vspace{1.5pt}%
-  \noindent{\small$\bullet$\enskip\textbf{#1}}%
-  \\[-3pt]%
-  \noindent\hspace{0.9em}{\footnotesize #2}%
-  \vspace{0.5pt}%
+  \vspace{2pt}%
+  \noindent\small$\bullet$\enskip\textbf{#1}\par%
+  \vspace{-1pt}%
+  \noindent\hspace{0.85em}{\small #2}\par%
+  \vspace{1pt}%
 }
 
 \begin{document}
