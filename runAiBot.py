@@ -660,18 +660,35 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
                 # School / university in dropdown
                 elif any(w in label for w in ['university', 'college', 'school', 'institution']):
                     answer = "Indian Institute Of Technology Jammu"
+                # Years of experience dropdown — pick "1 year" (or closest low value)
+                elif 'year' in label and any(w in label for w in ['experience', 'professional', 'work']):
+                    _target_years = ["1 year", "1 Years", "1", "One"]
+                    _found = next((opt for opt in optionsText for t in _target_years if t.lower() in opt.lower()), None)
+                    if not _found:
+                        # fallback: pick the second option (skip "Select an option")
+                        _found = optionsText[1] if len(optionsText) > 1 else "1 year"
+                    answer = _found
+                    print_lg(f"ExperienceSelect: years → '{answer}'")
+                # Months of experience dropdown — pick "0 month"
+                elif 'month' in label and any(w in label for w in ['experience', 'additional', 'extra']):
+                    _target_months = ["0 month", "0 months", "0", "Zero", "None"]
+                    _found = next((opt for opt in optionsText for t in _target_months if t.lower() in opt.lower()), None)
+                    if not _found:
+                        _found = optionsText[1] if len(optionsText) > 1 else "0 month"
+                    answer = _found
+                    print_lg(f"ExperienceSelect: months → '{answer}'")
                 # Add location handling
                 elif any(loc_word in label for loc_word in ['location', 'city', 'state', 'country']):
                     if 'country' in label:
-                        answer = country 
+                        answer = country
                     elif 'state' in label:
                         answer = state
                     elif 'city' in label:
                         answer = current_city if current_city else work_location
                     else:
                         answer = work_location
-                else: 
-                    answer = answer_common_questions(label,answer)
+                else:
+                    answer = answer_common_questions(label, answer)
                 try: 
                     select.select_by_visible_text(answer)
                 except NoSuchElementException as e:
@@ -1563,9 +1580,10 @@ def main() -> None:
         timeSavedMsg = ""
         if timeSaved > 0:
             timeSaved += 60
-            timeSavedMsg = f"In this run, you saved approx {round(timeSaved/60)} mins ({timeSaved} secs), please consider supporting the project."
-        pyautogui.alert(msg, "Exiting..")
-        print_lg(msg,"Closing the browser...")
+            timeSavedMsg = f"\nTime saved this run: ~{round(timeSaved/60)} mins"
+        msg = f"{summary}\n{quotes}{timeSavedMsg}"
+        pyautogui.alert(msg, "Run Complete!")
+        print_lg(msg, "Closing the browser...")
         if tabs_count >= 10:
             msg = "NOTE: IF YOU HAVE MORE THAN 10 TABS OPENED, PLEASE CLOSE OR BOOKMARK THEM!\n\nOr it's highly likely that application will just open browser and not do anything next time!" 
             pyautogui.alert(msg,"Info")
